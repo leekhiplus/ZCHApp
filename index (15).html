@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZCH NewsCard Studio</title>
+<meta name="theme-color" content="#000000">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Noto+Sans+Arabic:wght@400;700;800&family=Noto+Kufi+Arabic:wght@400;700;800&family=Amiri:wght@400;700&family=Lateef:wght@400;700&family=Scheherazade+New:wght@400;700&family=Vazirmatn:wght@400;700;800&family=Harmattan:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;700&family=Montserrat:wght@400;700;800&family=Poppins:wght@400;700;800&family=Oswald:wght@400;700&family=Bebas+Neue&family=Anton&family=Roboto+Condensed:wght@400;700&family=Barlow+Condensed:wght@400;700&family=Teko:wght@400;700&family=Rajdhani:wght@400;700&family=Russo+One&family=Playfair+Display:wght@400;700;800&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--s1:#141416;--s2:#232328;--mu:#9a9aa5;--ac:#25f4ee}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;position:fixed;inset:0;height:100dvh;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);color:#fff;font:14px system-ui,-apple-system,sans-serif}
+header{flex:none;height:50px;padding:0 12px;display:flex;align-items:center;gap:10px}
+header b{flex:1;font-size:15px;font-weight:600}
+.chip{background:var(--s2);border-radius:14px;padding:5px 11px;font-size:12px;cursor:pointer}
+#tx{background:linear-gradient(90deg,var(--ac),#5ef0ff);color:#000;font-weight:700;padding:8px 18px;border-radius:18px}
+main{flex:1;min-height:0;display:flex;flex-direction:column}
+#pv{flex:none;display:flex;flex-direction:column;padding:0 10px}
+#pw{flex:none;height:30vh;min-height:140px;position:relative}
+#cv{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;border-radius:6px;background:#000}
+#tp{flex:none;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:6px 0 0;color:var(--mu);font-size:12px}
+#pp{width:44px;height:44px;border-radius:50%;background:#fff;color:#000;font-size:15px;padding:0;font-weight:700}
+#sk{flex:none}
+#tl{flex:none;width:100%;height:64px;margin-top:2px;border-radius:8px;cursor:pointer;display:block}
+#msg{flex:none;color:#ff8a9b;font-size:12px;margin:2px 0}#msg:empty{display:none}
+button,select,input,textarea{font:inherit;color:#fff;background:var(--s2);border:0;border-radius:10px;padding:9px}
+button{cursor:pointer}button:active{opacity:.7}button.r{background:var(--ac);color:#000;font-weight:700}
+label{display:block;margin:10px 0 4px;font-size:12px;color:var(--mu)}
+input[type=text],textarea,select,input[type=number]{width:100%}
+input[type=range]{width:100%;padding:0;accent-color:var(--ac);background:none;height:22px}
+input[type=color]{padding:2px;height:36px;width:100%}input[type=checkbox]{width:auto;accent-color:var(--ac)}
+input[type=file]{width:100%;font-size:12px}textarea{min-height:60px}
+.row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}.row>*{flex:1;min-width:70px}
+#side{display:block;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;background:var(--s1);border-radius:18px 18px 0 0;padding:0 14px 16px}
+@media(min-width:900px){main{flex-direction:row}#pv{flex:1;min-width:0}#pw{flex:1;height:auto}#side{flex:none;width:380px;border-radius:0}}
+@media(max-height:560px){#pw{height:22vh;min-height:90px}#sk,#tl{display:none}}
+#sh{position:sticky;top:0;z-index:2;background:var(--s1);display:flex;align-items:center;justify-content:space-between;padding:12px 0 4px}
+#sh b{font-size:14px}#sx{background:none;font-size:18px;padding:4px 8px}
+.pn{display:none}.pn.on{display:block}
+#nv{flex:none;height:58px;background:var(--bg);border-top:1px solid #222;display:flex}
+#nv button{flex:1 1 0;min-width:0;background:none;color:var(--mu);font-size:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 0;border-radius:0}
+#nv button.on{color:#fff}#nv button.on svg{color:var(--ac)}#nv svg{width:22px;height:22px}
+.card{display:flex;gap:8px;align-items:center;padding:6px;border-radius:10px;border:1px solid transparent;cursor:pointer;margin-bottom:6px;background:var(--s2)}
+.card.on{border-color:var(--ac)}.card i{width:48px;height:32px;border-radius:5px;background:#3a3a44 center/cover;flex:none}
+.card small{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.card button{padding:3px 9px;min-width:0;flex:none;background:#34343b}
+#fp{margin-top:10px;padding:12px;background:#000;border-radius:10px;font-size:22px;text-align:center;line-height:1.9}
+progress{accent-color:var(--ac)}
+#ur{justify-self:end;display:flex;gap:8px}#ur button{width:38px;height:38px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center}#ur svg{width:20px;height:20px}#ur button:disabled{opacity:.3}
+#ith{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}.th{width:56px;height:40px;border-radius:6px;background:#333 center/cover;position:relative;flex:none}.th b{position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:#fe2c55;font-size:11px;text-align:center;line-height:20px;cursor:pointer}
+</style></head><body>
+<header><b>ZCH NewsCard Studio</b><span id="rs" class="chip">720p</span><button id="tx">Export</button></header>
+<main>
+<section id="pv">
+<div id="pw"><canvas id="cv"></canvas></div>
+<div id="tp"><span id="tm">0:00 / 0:00</span><button id="pp">▶</button><span id="ur"><button id="un" aria-label="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button><button id="re" aria-label="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button></span></div><input id="sk" type="range" min="0" max="1000" value="0">
+<canvas id="tl"></canvas><div id="msg"></div>
+</section>
+<section id="side"><div id="sh"><b id="st"></b></div>
+<div class="pn" id="p0"><div class="row"><button id="add" class="r">Add card</button><button id="dup">Duplicate</button><button id="del">Delete</button></div>
+<details id="nws" style="margin-top:8px"><summary style="cursor:pointer;color:var(--ac);padding:8px 0">Paste news and create cards</summary>
+<textarea id="ntx" dir="auto" placeholder="Paste the full news text here" style="min-height:120px"></textarea>
+<div class="row"><div><label>Max cards</label><input type="number" id="nmx" value="6" min="1" max="12"></div><div><label>Gemini text model</label><select data-g="tm"><option value="gemini-3.8-flash">Gemini 3.8 Flash</option><option value="gemini-flash-latest">Latest Flash (automatic)</option><option value="gemini-3.5-flash-lite">Gemini 3.5 Flash-Lite</option></select></div></div>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="nai">Use Gemini to write Urdu headlines, summaries and scripts</label>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="nvo">Generate one voiceover for the whole video</label>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="nrep">Replace the existing cards</label>
+<button id="nmk" class="r" style="width:100%;margin-top:8px">Create cards</button><div id="nst" style="font-size:12px;color:var(--mu);margin-top:6px"></div></details>
+<div id="list" style="margin-top:8px"></div></div>
+<div class="pn" id="p1">
+<label>Template</label><select id="tpl" data-k="tpl" data-n></select>
+<label>Headline</label><textarea data-k="head" dir="auto"></textarea>
+<label>Description</label><textarea data-k="desc" dir="auto"></textarea>
+<div id="ex"></div>
+<label>Images (add several for a slideshow)</label><div class="row"><input id="img" type="file" accept="image/*" multiple style="flex:3"><button id="rimg">Clear all</button></div><div id="ith"></div>
+<div class="row"><div><label>Image fit</label><select data-k="fit"><option value="fill">Fill (crop the edges)</option><option value="fit">Fit (show whole picture)</option></select></div><div><label>Zoom</label><input type="range" data-k="iz" data-n min=".5" max="3" step=".05"></div></div>
+<div class="row"><div><label>Position X (left to right)</label><input type="range" data-k="fx" data-n min="0" max="100"></div><div><label>Position Y (top to bottom)</label><input type="range" data-k="fy" data-n min="0" max="100"></div></div>
+<label>Picture frame size (templates 1, 2, 12, 15)</label><input type="range" data-k="fs" data-n min=".6" max="1.3" step=".05">
+<div class="row" style="margin-top:6px"><button id="irst">Reset image</button><button id="iall">Apply to all cards</button></div>
+<div id="im2"><label>Reporter photo</label><div class="row"><input id="img2" type="file" accept="image/*" style="flex:3"><button id="rimg2">Remove</button></div></div>
+</div>
+<div class="pn" id="p2">
+<div class="row"><div><label>Start (seconds)</label><input type="number" data-k="s" data-n step=".1" min="0"></div><div><label>End (seconds)</label><input type="number" data-k="e" data-n step=".1" min="0"></div></div>
+<div class="row" style="margin-top:6px"><button id="ss">Start = playhead</button><button id="se">End = playhead</button></div>
+<div class="row" style="margin-top:6px"><button id="cgap">Close gaps (start from 0, cards one after another)</button></div>
+<div class="row" style="margin-top:6px"><button id="dist">Distribute card times evenly</button><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" data-g="ov" data-n>Allow overlapping cards</label></div>
+<label>Voiceover (MP3, WAV, M4A, AAC)</label><input id="aud" type="file" accept="audio/*">
+<div class="row"><div><label>Volume</label><input id="vol" type="range" min="0" max="1" step=".05" value="1"></div><button id="ra">Remove audio</button></div>
+</div>
+<div class="pn" id="p3">
+<div class="row"><div><label>Aspect</label><select data-g="asp"><option>16:9</option><option>9:16</option><option>1:1</option></select></div><div><label>Resolution</label><select data-g="res" data-n><option value="720">720p</option><option value="1080">1080p</option></select></div><div><label>FPS</label><select data-g="fps" data-n><option>24</option><option>25</option><option>30</option></select></div></div>
+<label>Video ends at</label><select data-g="endm"><option value="voice">End of voiceover</option><option value="card">End of last card</option></select>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-g="tickOn" data-n>Show ticker</label>
+<label>Ticker text</label><input type="text" data-g="tick" dir="auto">
+<label>Ticker direction</label><div class="row" id="tdr"><button data-dir="1">◀ Right to left</button><button data-dir="-1">Left to right ▶</button></div>
+<div class="row"><div><label>Speed</label><input type="range" data-g="tickSpd" data-n min="40" max="300"></div><div><label>Text</label><input type="color" data-g="tickC"></div><div><label>Bar</label><input type="color" data-g="tickBg"></div></div>
+</div>
+<div class="pn" id="p4">
+<label>Channel name</label><input type="text" data-g="chan">
+<label>Logo (transparent PNG)</label><div class="row"><input id="lg" type="file" accept="image/png" style="flex:3"><button id="rlg">Remove</button></div>
+<div class="row"><div><label>Position</label><select data-g="lpos"><option value="tl">Top left</option><option value="tr">Top right</option><option value="bl">Bottom left</option><option value="br">Bottom right</option></select></div><div><label>Size</label><input type="range" data-g="lsz" data-n min=".05" max=".4" step=".01"></div><div><label>Opacity</label><input type="range" data-g="lop" data-n min=".1" max="1" step=".05"></div></div>
+
+</div>
+<div class="pn" id="p5">
+<label>File name</label><input id="fn" type="text" value="zch-news">
+<div class="row" style="margin-top:6px"><button id="ex1" class="r">Export video</button><button id="cx">Cancel</button></div>
+<progress id="pg" max="1" value="0" style="width:100%;margin-top:6px"></progress><div id="xs"></div><a id="dl" style="display:none;color:#f5c518;margin-top:6px" href="#"></a>
+</div>
+<div class="pn" id="p6">
+<label>Urdu font</label><select id="fsu" data-k="fu"></select>
+<label>English font</label><select id="fse" data-k="fe"></select>
+<div id="fp" dir="auto">بریکنگ نیوز — Breaking News 2026</div>
+<div class="row"><div><label>Text size</label><input type="range" data-k="ts" data-n min=".5" max="1.6" step=".05"></div><div><label>Text color</label><input type="color" data-k="tc"></div><div><label>Background</label><input type="color" data-k="bg"></div></div>
+<div class="row" style="margin-top:10px"><button id="fa">Apply fonts to all cards &amp; ticker</button></div>
+<label>Upload your own font (.ttf, .otf, .woff2)</label><input id="fnt" type="file" accept=".ttf,.otf,.woff,.woff2">
+</div>
+<div class="pn" id="p7">
+<div class="row"><div><label>Text animation</label><select id="ta" data-k="ta" data-n></select></div><div><label>Image animation</label><select id="ia" data-k="ia" data-n></select></div></div>
+<label>Animation speed</label><input type="range" data-k="sp" data-n min=".5" max="3" step=".1">
+<div class="row"><div><label>Transition between cards</label><select data-g="trans"><option value="cross">Crossfade</option><option value="fade">Fade through black</option><option value="slide">Slide from right</option><option value="slidel">Slide from left</option><option value="slideu">Slide up</option><option value="push">Push</option><option value="zoom">Zoom in</option><option value="wipe">Wipe</option><option value="flash">Flash</option><option value="cut">Simple cut</option></select></div><div><label>Transition length</label><input type="range" data-g="td" data-n min=".2" max="1.5" step=".1"></div></div>
+<h3 style="margin:16px 0 4px;color:var(--ac);font-size:12px">Light sweep (every card)</h3>
+<div class="row"><div><label>Where</label><select data-g="ls"><option value="bars">Bars and panels</option><option value="all">Whole card + bars</option><option value="off">Off</option></select></div><div><label>Strength</label><input type="range" data-g="lsi" data-n min=".15" max=".9" step=".05"></div><div><label>Every (seconds)</label><input type="range" data-g="lsp" data-n min="1.5" max="6" step=".5"></div></div>
+<h3 style="margin:16px 0 4px;color:var(--ac);font-size:12px">Sound when a card changes</h3>
+<div class="row"><div><label>Default sound</label><select data-g="sfx" id="sfxg"></select></div><div><label>Volume</label><input type="range" data-g="sfv" data-n min="0" max="1" step=".05"></div></div>
+<label>This card</label><select data-k="sfx" id="sfxc"></select>
+<div class="row" style="margin-top:6px"><button id="sfxt">Play the sound</button></div>
+<h3 style="margin:16px 0 4px;color:var(--ac);font-size:12px">Overlay effects (this card)</h3>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-k="ot" data-n>Tag slides in from the left</label>
+<div class="row"><div><label>Tag text</label><input type="text" data-k="ot1" dir="auto"></div><div><label>Small box</label><input type="text" data-k="ot2" dir="auto"></div></div>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-k="ol" data-n>Lower-third bar with text</label>
+<label>Lower-third text (empty = headline)</label><input type="text" data-k="lt" dir="auto">
+<div class="row"><div><label>Text exit</label><select data-k="olx"><option value="fade">Fade out</option><option value="slide">Slide out</option><option value="stay">Stay</option></select></div><div><label>Bar colour</label><input type="color" data-k="olc"></div></div>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-k="sh" data-n>Shine sweep on the tag and bar</label>
+<div class="row"><div><label>Photo change style</label><select data-k="it"><option value="cross">Crossfade</option><option value="slide">Slide</option><option value="zoom">Zoom through</option><option value="flash">Flash</option><option value="wipe">Wipe</option></select></div><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-k="pz" data-n>Punch zoom on each photo</label></div>
+<div class="row" style="margin-top:8px"><button id="fxref" class="r">Use reference style</button><button id="fxall">Apply to all cards</button></div>
+</div>
+<div class="pn" id="p8">
+<label>Gemini API key</label>
+<div class="row"><input type="password" id="gk" placeholder="Paste your API key" autocomplete="off" style="flex:3"><button id="gks" class="r">Save</button><button id="gkc">Remove</button></div>
+<div id="gst" style="font-size:12px;color:var(--mu);margin-top:4px"></div>
+<div class="row"><div><label>Model</label><select data-g="gm"><option value="gemini-3.8-flash-tts">Gemini 3.8 Flash TTS</option><option value="gemini-3.8-flash-lite-tts">Gemini 3.8 Flash-Lite TTS</option></select></div><div><label>Voice</label><select data-g="gv" id="gvs"></select></div></div>
+<label>Delivery style (optional)</label><input type="text" data-g="gs" dir="auto">
+<label>Script for this card</label><textarea data-k="script" dir="auto" style="min-height:90px"></textarea>
+<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-k="cap" data-n>Show the script on the card, synced with the voice</label>
+<div class="row" style="margin-top:8px"><button id="vfill">Use headline + description</button><button id="vsplit">Split into cards</button></div>
+<label style="display:flex;gap:6px;align-items:center;margin-top:8px"><input type="checkbox" data-g="as" data-n>Auto-split a long script into several cards</label>
+<h3 style="margin:16px 0 4px;color:var(--ac);font-size:12px">Voiceover (one track for the whole video)</h3>
+<button id="vgen" class="r" style="width:100%">Generate ONE voiceover with Gemini</button>
+<label>Or import your own voice (MP3, WAV, M4A)</label><div class="row"><input id="aud2" type="file" accept="audio/*" style="flex:3"><button id="vsync">Match cards to the voice</button></div>
+<div class="row" style="margin-top:8px"><button id="vplay">Play this card</button><button id="vdel">Delete the voiceover</button></div>
+<div id="vst" style="font-size:12px;color:var(--mu);margin-top:8px"></div>
+</div></section></main><nav id="nv"></nav>
+<script>
+const $=i=>document.getElementById(i),esc=s=>(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const UR=/[\u0600-\u06FF]/,FL=new Set(),UFN=['Noto Nastaliq Urdu','Noto Naskh Arabic','Noto Sans Arabic','Noto Kufi Arabic','Amiri','Lateef','Scheherazade New','Vazirmatn','Harmattan','IBM Plex Sans Arabic','Jameel Noori Nastaleeq'],EFN=['Arial','Montserrat','Poppins','Oswald','Bebas Neue','Anton','Roboto Condensed','Barlow Condensed','Teko','Rajdhani','Russo One','Playfair Display','Merriweather'];let FONT,LHF=2.3;
+function lf(n){if(!n||FL.has(n))return;FL.add(n);[400,700].forEach(w=>document.fonts.load(`${w} 24px "${n}"`,'بریکنگ نیوز ABC abc').then(draw).catch(()=>0))}
+function stk(u,e){u=u||'Noto Nastaliq Urdu';e=e||'Arial';lf(u);lf(e);return `"${e}","${u}","Noto Nastaliq Urdu","Jameel Noori Nastaleeq","Noto Naskh Arabic",Tahoma,sans-serif`}
+const fpv=()=>{const c=cur();$('fp').style.fontFamily=stk(c.fu,c.fe)};
+const TPL=['Classic Breaking News','Professional TV Bulletin','Cricket Sports News','Headline News','Special Report','Match Score Update','Player Performance','Breaking News Alert','Photo + Red Panel','Orange Slant Panel','Social Card (Reporter)','Top Banner + Image','Split Screen Bulletin','Full Image Overlay','Framed Photo Card','Headline First','Clean Photo (for effects)'];
+const LBL=[[],[],['Team A','Team B','Score line','Info line'],[],[],['Team A','Team B','Score (e.g. 187/4)','Overs / wickets / status'],['Player name','Team','Stats line 1','Stats line 2'],[],[],[],['Reporter name tag','','Footer text (page URL)',''],...[0,1,2,3,4].map(i=>['Strip label (e.g. TOP STORIES)','Top banner text','Strip text (optional)',i==4?'Banner side text':'']),[]];
+const nc=(s=0,e=5)=>({tpl:0,head:'بریکنگ نیوز: پاکستان نے سیریز جیت لی',desc:'قومی ٹیم نے شاندار کارکردگی کا مظاہرہ کرتے ہوئے میچ اپنے نام کر لیا۔',a:'Pakistan',b:'Opponent',c:'187/4',d:'18.2 overs',tc:'#ffffff',bg:'#0a1630',ta:0,ia:0,ts:1,s,e,src:'',src2:'',fu:'Noto Nastaliq Urdu',fe:'Montserrat',sp:1,imgs:[],script:'',vid:'',vd:0,vw:[],wt:[],cap:1,fit:'fill',iz:1,fx:50,fy:35,fs:1,ot:0,ot1:'BREAKING NEWS',ot2:'LIVE',ol:0,lt:'',olx:'fade',olc:'#0e1a4a',sh:1,it:'cross',pz:0,sfx:'def'});
+let P={cards:[nc()],sel:0,asp:'16:9',res:720,fps:30,trans:'cross',ad:.7,endm:'voice',ov:0,tickOn:1,tick:'بریکنگ نیوز • ZCH NEWS • Zafar Cricket Hub • تازہ ترین خبریں',tickSpd:120,tickC:'#ffffff',tickBg:'#c8102e',chan:'ZAFAR CRICKET HUB',logo:'',lpos:'tr',lsz:.14,lop:.9};
+try{const x=JSON.parse(localStorage.zch);if(x&&x.cards&&x.cards.length)P=x}catch(e){}
+P.fu=P.fu||'Noto Nastaliq Urdu';P.fe=P.fe||'Montserrat';P.td=P.td||.6;P.tdir=P.tdir||1;P.gm=P.gm||'gemini-3.8-flash-tts';P.gv=P.gv||'Kore';P.tm=P.tm||'gemini-3.8-flash';if(P.as===undefined)P.as=1;P.ls=P.ls||'bars';if(P.lsi==null)P.lsi=.5;if(P.lsp==null)P.lsp=2.4;P.sfx=P.sfx||'whoosh';if(P.sfv==null)P.sfv=.7;if(P.gs===undefined)P.gs='professional news anchor, clear and steady';P.cards.forEach(c=>{c.fu=c.fu||P.fu;c.fe=c.fe||P.fe;c.sp=c.sp||1;c.imgs=c.imgs||(c.src?[c.src]:[]);c.script=c.script||'';c.vw=c.vw||[];c.wt=c.wt||[];c.vd=c.vd||0;if(c.cap===undefined)c.cap=1;c.fit=c.fit||'fill';if(c.iz==null)c.iz=1;if(c.fx==null)c.fx=50;if(c.fy==null)c.fy=35;if(c.fs==null)c.fs=1;if(c.ot==null)c.ot=0;c.ot1=c.ot1||'BREAKING NEWS';if(c.ot2==null)c.ot2='LIVE';if(c.ol==null)c.ol=0;c.lt=c.lt||'';c.olx=c.olx||'fade';c.olc=c.olc||'#0e1a4a';if(c.sh==null)c.sh=1;c.it=c.it||'cross';if(c.pz==null)c.pz=0;c.sfx=c.sfx||'def';if(c.vid){c.vd=0;c.vw=[];c.wt=[];c.vid=''}});
+const cv=$('cv'),X=cv.getContext('2d'),A=new Audio(),IC={};
+let W,H,S,FH=0,SH=0,CU=0,T=0,t0=0,playing=0,adur=0,peaks=null,AC,DS,rec,chunks=[],exporting=0,cancel=0,stt;
+const cur=()=>P.cards[P.sel],tot=()=>P.endm=='card'||!adur?Math.max(.1,...P.cards.map(c=>c.e)):adur;
+const cl=(v,a,b)=>Math.min(b,Math.max(a,v)),ez=p=>1-Math.pow(1-p,3),fm=s=>(s/60|0)+':'+String(s%60|0).padStart(2,'0');
+const bo=x=>x<1/2.75?7.5625*x*x:x<2/2.75?7.5625*(x-=1.5/2.75)*x+.75:x<2.5/2.75?7.5625*(x-=2.25/2.75)*x+.9375:7.5625*(x-=2.625/2.75)*x+.984375;
+const save=()=>{try{localStorage.zch=JSON.stringify(P)}catch(e){try{localStorage.zch=JSON.stringify({...P,logo:'',cards:P.cards.map(c=>({...c,src:'',src2:'',imgs:[]}))})}catch(x){}}};
+let HS=[],hp=-1,hsg='',ht;
+const sv=()=>{clearTimeout(stt);stt=setTimeout(save,400);hc()};
+const snap=()=>({...P,cards:P.cards.map(c=>({...c}))}),sig=o=>JSON.stringify(o,(k,v)=>typeof v=='string'&&v.length>200?v.length+v.slice(-30):k=='sel'?0:v);
+const hc=()=>{clearTimeout(ht);ht=setTimeout(hcm,500)};
+function ub(){$('un').disabled=hp<=0;$('re').disabled=hp>=HS.length-1}
+function hcm(){clearTimeout(ht);const s=snap(),g=sig(s);if(g==hsg)return;HS=HS.slice(0,hp+1);HS.push(s);if(HS.length>60)HS.shift();hp=HS.length-1;hsg=g;ub()}
+function hr(d){hcm();const i=hp+d;if(i<0||i>=HS.length)return;hp=i;const o=P.sel;P={...HS[i],cards:HS[i].cards.map(c=>({...c}))};P.sel=Math.min(o,P.cards.length-1);hsg=sig(HS[i]);size();fill();list();val();draw();save();ub()}
+function gi(s){if(!s)return null;let i=IC[s];if(!i){i=IC[s]=new Image();i.onload=draw;i.src=s}return i.complete&&i.naturalWidth?i:null}
+function size(){const a=P.asp,s=P.res,l=Math.round(s*16/9);W=a=='16:9'?l:s;H=a=='9:16'?l:s;S=s/720;cv.width=W;cv.height=H}
+/* ---------- drawing helpers ---------- */
+function R(x,y,w,h,f,r=0){X.fillStyle=f;X.beginPath();r?X.roundRect(x,y,w,h,r):X.rect(x,y,w,h);X.fill()}
+function LB(s,x,y,w,h,bg,fg){R(x,y,w,h,bg,h/4);X.fillStyle=fg;X.font=`800 ${h*.52}px ${FONT}`;X.direction='ltr';X.textAlign='center';X.textBaseline='middle';X.fillText(s,x+w/2,y+h/2)}
+function anim(c,t,cx,cy){const u=cl((t-c.s)/Math.max(.2,P.ad/(c.sp||1)),0,1),p=ez(u),a=c.ta;if(a==13)return;X.globalAlpha*=a>10?1:p;
+if(a==1)X.translate((1-p)*W*.5,0);if(a==2)X.translate(-(1-p)*W*.5,0);if(a==3)X.translate(0,(1-p)*H*.3);if(a==6)X.translate(0,-(1-p)*H*.3);if(a==8)X.translate(0,-(1-bo(u))*H*.35);
+if(a==11){X.beginPath();X.rect(W*(1-p),0,W*p,H);X.clip()}if(a==12){X.beginPath();X.rect(0,0,W*p,H);X.clip()}
+if(a==4||a==5||a==7||a==9||a==10){X.translate(cx,cy);if(a==9)X.rotate(-(1-p)*.9);if(a==10)X.scale(Math.max(.02,p),1);else{const q=a==4?1+2.70158*Math.pow(p-1,3)+1.70158*Math.pow(p-1,2):a==5?.6+.4*p:a==7?1.6-.6*p:.4+.6*p;X.scale(q,q)}X.translate(-cx,-cy)}}
+function wrap(str,w,sz,wt){const rt=UR.test(str);X.font=`${wt} ${sz}px ${FONT}`;X.direction=rt?'rtl':'ltr';const out=[];str.split('\n').forEach(p=>{let l='';p.split(/\s+/).forEach(wd=>{const n=l?l+' '+wd:wd;if(l&&X.measureText(n).width>w){out.push(l);l=wd}else l=n});out.push(l)});return{out,rt,lh:sz*(rt?LHF:1.3)}}
+function T_(c,t,str,x,y,w,sz,col,wt=700,al){if(!str)return 0;sz*=S*c.ts;const{out,rt,lh}=wrap(str,w,sz,wt),h=out.length*lh;X.save();anim(c,t,x+w/2,y+h/2);X.fillStyle=col;X.textBaseline='middle';X.textAlign=al?(rt?'right':'left'):'center';X.direction=rt?'rtl':'ltr';const px=al?(rt?x+w:x):x+w/2;out.forEach((l,i)=>X.fillText(l,px,y+lh*(i+.5)));X.restore();return h}
+function IMG(c,t,x,y,w,h,sr){const L=sr===undefined?(c.imgs&&c.imgs.length?c.imgs:[c.src]):[sr],n=L.length,sg=Math.max(.1,(c.e-c.s)/n),i=n>1?cl(Math.floor((t-c.s)/sg),0,n-1):0,ts=t-c.s-i*sg,a0=X.globalAlpha;X.save();X.beginPath();X.rect(x,y,w,h);X.clip();
+const one=(k,tt,al)=>{const im=gi(L[k]);X.globalAlpha=a0*al;if(!im){const g=X.createLinearGradient(x,y,x+w,y+h);g.addColorStop(0,'#1c2f66');g.addColorStop(1,'#0a1630');X.fillStyle=g;X.fillRect(x,y,w,h)}else{const p=cl(tt/sg,0,1),a=c.ia;let z=1,px=0,py=0;if(a==0)z=1+.15*p;if(a==1)z=1.15-.15*p;if(a==2||a==3){z=1.2;px=(a==2?-1:1)*(p-.5)*.18*w}if(a==5||a==6){z=1.2;py=(a==5?-1:1)*(p-.5)*.18*h}if(a==7){z=1+.2*p;px=(p-.5)*.12*w}if(a==8){z=1.2-.2*p;px=-(p-.5)*.12*w}if(a==9)z=1.06+.04*Math.sin(tt*2.5);if(a==10)z=1+.35*ez(cl(tt/1.5,0,1));if(c.pz)z*=1+.07*Math.max(0,1-tt/.4);const ad=sr===undefined,fit=ad&&c.fit=='fit',zm=ad?(c.iz||1):1,fx=ad&&c.fx!=null?c.fx/100:.5,fy=ad&&c.fy!=null?c.fy/100:.5,r=(fit?Math.min(w/im.width,h/im.height):Math.max(w/im.width,h/im.height))*zm*z,dw=im.width*r,dh=im.height*r;if(fit||zm<1)blur(im,x,y,w,h);X.drawImage(im,x+(w-dw)*fx+px,y+(h-dh)*fy+py,dw,dh)}};
+const td=Math.min(.6,sg*.5),it=c.it||'cross';
+if(n>1&&i>0&&ts<td){const q=ez(ts/td);
+if(it=='slide'){one(i-1,sg,1);X.save();X.translate((1-q)*w,0);one(i,ts,1);X.restore()}
+else if(it=='zoom'){one(i-1,sg,1);X.save();X.translate(x+w/2,y+h/2);X.scale(1.3-.3*q,1.3-.3*q);X.translate(-(x+w/2),-(y+h/2));one(i,ts,q);X.restore()}
+else if(it=='flash'){one(q<.5?i-1:i,q<.5?sg:ts,1);X.globalAlpha=a0*(1-Math.abs(q*2-1))*.9;X.fillStyle='#fff';X.fillRect(x,y,w,h)}
+else if(it=='wipe'){one(i-1,sg,1);X.save();X.beginPath();X.rect(x+w*(1-q),y,w*q,h);X.clip();one(i,ts,1);X.restore()}
+else{one(i-1,sg,1);one(i,ts,q)}}
+else one(i,ts,1);X.restore()}
+function FLAG(n,x,y,r){X.save();X.beginPath();X.arc(x,y,r,0,7);X.clip();X.textAlign='center';X.textBaseline='middle';if(/pak|پاک/i.test(n)){X.fillStyle='#01411c';X.fillRect(x-r,y-r,2*r,2*r);X.fillStyle='#fff';X.fillRect(x-r,y-r,r*.5,2*r);X.beginPath();X.arc(x+r*.1,y,r*.5,0,7);X.fill();X.fillStyle='#01411c';X.beginPath();X.arc(x+r*.25,y-r*.08,r*.42,0,7);X.fill();X.fillStyle='#fff';X.font=`${r*.4}px Arial`;X.fillText('★',x+r*.42,y-r*.3)}else{X.fillStyle='#24418f';X.fillRect(x-r,y-r,2*r,2*r);X.fillStyle='#fff';X.font=`800 ${r*.6}px Arial`;X.direction='ltr';X.fillText((n||'?').replace(/\s/g,'').slice(0,3).toUpperCase(),x,y)}X.restore();X.lineWidth=3*S;X.strokeStyle='#f5c518';X.beginPath();X.arc(x,y,r,0,7);X.stroke();X.fillStyle='#fff';X.font=`700 ${24*S}px ${FONT}`;X.textAlign='center';X.textBaseline='middle';X.direction=UR.test(n)?'rtl':'ltr';X.fillText(n||'',x,y+r+26*S)}
+const BC=document.createElement('canvas');
+function blur(im,x,y,w,h){BC.width=24;BC.height=Math.max(8,Math.round(24*h/w));const k=Math.max(BC.width/im.width,BC.height/im.height),dw=im.width*k,dh=im.height*k;BC.getContext('2d').drawImage(im,(BC.width-dw)/2,(BC.height-dh)/2,dw,dh);X.imageSmoothingEnabled=true;X.imageSmoothingQuality='high';X.drawImage(BC,x,y,w,h)}
+function PG(x,y,w,h,sk,f,sc,lw){X.beginPath();X.moveTo(x+sk,y);X.lineTo(x+w+sk,y);X.lineTo(x+w,y+h);X.lineTo(x,y+h);X.closePath();X.fillStyle=f;X.fill();if(sc){X.strokeStyle=sc;X.lineWidth=lw;X.stroke()}}
+function IT(s,x,y,fs,col){X.fillStyle=col;X.font=`italic 900 ${fs}px ${FONT}`;X.direction='ltr';X.textAlign='center';X.textBaseline='middle';X.fillText(s,x,y)}
+function HT(c,s,w,sz,wt=700){if(!s)return 0;const q=wrap(s,w,sz*S*c.ts,wt);return q.out.length*q.lh}
+function TG(s,x,y,w,h){R(x,y,w,h,'#fff');X.fillStyle='#0a1630';X.font=`700 ${h*.5}px ${FONT}`;X.direction=UR.test(s)?'rtl':'ltr';X.textAlign='center';X.textBaseline='middle';X.fillText(s,x+w/2,y+h/2)}
+const TP=(x,y,w,h)=>{R(x,y,w,h,'rgba(8,16,40,.92)',14*S);SHB(x,y,w,h)};
+function BN(c,k,tb){BN0(c,k,tb);SHB(0,0,W,tb)}
+function BN0(c,k,tb){const w=W,tx=c.b||'BREAKING NEWS';
+if(k==11){R(0,0,w,tb,'#c8102e');R(0,tb,w,4*S,'#f5c518');IT(tx,w/2,tb/2,tb*.55,'#fff')}
+else if(k==12){R(0,0,w,tb,'#0a1630');PG(w*.5,tb*.12,w*.46,tb*.76,12*S,'#e10600','#fff',2*S);IT(tx,w*.73+6*S,tb/2,tb*.5,'#fff')}
+else if(k==13){R(0,0,w,tb,'#0a1630');PG(w*.03,tb*.14,w*.5,tb*.72,14*S,'#e10600');IT(tx,w*.28+7*S,tb/2,tb*.5,'#fff')}
+else if(k==14){PG(w*.2,tb*.2,w*.6,tb*.8,tb*.3,'#e10600','#fff',3*S);IT(tx,w/2+tb*.15,tb*.6,tb*.5,'#fff')}
+else{R(0,0,w,tb,'#e10600');R(w*.62,0,w*.38,tb,'#fff');IT(tx,w*.31,tb/2,tb*.55,'#fff');if(c.d){X.fillStyle='#0a1630';X.font=`700 ${tb*.42}px ${FONT}`;X.direction=UR.test(c.d)?'rtl':'ltr';X.textAlign='center';X.textBaseline='middle';X.fillText(c.d,w*.81,tb/2)}}}
+function SP(c,B,col,lb,fg,tt='#fff'){SP0(c,B,col,lb,fg,tt);SHB(0,B,W,.06*H)}
+function SP0(c,B,col,lb,fg,tt='#fff'){const sp=.06*H,lw=Math.max(.22*W,220*S);R(0,B,W,sp,col);PG(W-lw-sp*.3,B,lw,sp,sp*.3,lb);X.textBaseline='middle';X.font=`800 ${sp*.5}px ${FONT}`;X.fillStyle=fg;X.textAlign='center';X.direction=UR.test(c.a)?'rtl':'ltr';X.fillText(c.a||'',W-lw/2-sp*.15,B+sp/2);if(c.c){const rt=UR.test(c.c);X.fillStyle=tt;X.font=`600 ${sp*.42}px ${FONT}`;X.direction=rt?'rtl':'ltr';X.textAlign=rt?'right':'left';X.fillText(c.c,rt?W-lw-sp*.6:.03*W,B+sp/2)}}
+/* ---------- templates ---------- */
+function CARD(c,t){if(c.cap&&c.vd&&c.vw&&c.vw.length)c={...c,desc:''};const k=c.tpl,ft=k==10?.07*H:0,sp=k>10&&k<16?.06*H:0,th=(P.tickOn?.075*H:0)+ft+sp,B=H-th,L=W>=H*.9,tc=c.tc;FONT=stk(c.fu,c.fe);LHF=/Nastaliq|Jameel/.test(c.fu||'Noto Nastaliq Urdu')?2.4:1.8;X.save();R(0,0,W,H,c.bg);
+if(k==0){const ih=B*.52*(c.fs||1);IMG(c,t,0,0,W,ih);R(0,ih,W,B*.28,'#c8102e');SHB(0,ih,W,B*.28);R(0,ih,W,6*S,'#f5c518');LB('BREAKING NEWS',.03*W,.03*B,260*S,48*S,'#c8102e','#fff');T_(c,t,c.head,.04*W,ih+.025*B,.92*W,50,tc);T_(c,t,c.desc,.04*W,ih+B*.29,.92*W,28,'#fff',400)}
+else if(k==1){R(0,0,W,B*.2,'#0d2a6b');SHB(0,0,W,B*.2);R(0,B*.2,W,5*S,'#f5c518');T_(c,t,c.head,.04*W,.03*B,.92*W,44,tc);const ih=B*.4*(c.fs||1);IMG(c,t,.06*W,B*.24,.88*W,ih);T_(c,t,c.desc,.06*W,B*.27+ih,.88*W,28,'#fff',400)}
+else if(k==2){const g=X.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0a1630');g.addColorStop(1,'#16398a');R(0,0,W,H,g);IMG(c,t,0,0,W,B*.38);const r=Math.min(W,H)*.075;FLAG(c.a,W*.25,B*.46,r);FLAG(c.b,W*.75,B*.46,r);X.fillStyle='#f5c518';X.font=`800 ${44*S}px Arial`;X.textAlign='center';X.textBaseline='middle';X.direction='ltr';X.fillText('VS',W/2,B*.46);const h=T_(c,t,c.head,.04*W,B*.58,.92*W,42,tc),py=B*.58+h;R(.05*W,py+.01*B,.9*W,.2*B,'rgba(0,0,0,.45)',16*S);SHB(.05*W,py+.01*B,.9*W,.2*B);T_(c,t,c.c,.06*W,py+.015*B,.88*W,40,'#f5c518');T_(c,t,c.d,.06*W,py+.11*B,.88*W,26,'#fff',400)}
+else if(k==3){const sp=L?[0,0,W*.5,B]:[0,0,W,B*.5];IMG(c,t,...sp);R(L?W*.5:0,L?0:B*.5,L?8*S:W,L?B:8*S,'#e10600');const tx=L?W*.54:.05*W,ty=L?.08*B:B*.54,tw=L?.42*W:.9*W,h=T_(c,t,c.head,tx,ty,tw,48,tc);T_(c,t,c.desc,tx,ty+h+.02*B,tw,26,'#fff',400)}
+else if(k==4){IMG(c,t,0,0,W,B);const w=.9*W,h1=HT(c,c.head,w,52),h2=HT(c,c.desc,w,26,400),ph=h1+h2+64*S+.02*B,py=B-ph-.03*B;TP(.03*W,py,.94*W,ph);LB('SPECIAL REPORT',.05*W,py+10*S,280*S,46*S,'#f5c518','#0a1630');T_(c,t,c.head,.05*W,py+60*S,w,52,tc);T_(c,t,c.desc,.05*W,py+60*S+h1,w,26,'#e6e6e6',400)}
+else if(k==5){const g=X.createLinearGradient(0,0,W,H);g.addColorStop(0,'#0a1630');g.addColorStop(1,'#1b3a8c');R(0,0,W,H,g);LB('MATCH UPDATE',.04*W,.03*B,260*S,46*S,'#e10600','#fff');T_(c,t,c.head,.04*W,.12*B,.92*W,34,tc);const r=Math.min(W,H)*.11;FLAG(c.a,W*.2,B*.45,r);FLAG(c.b,W*.8,B*.45,r);T_(c,t,c.c,.3*W,B*.37,.4*W,80,'#f5c518');T_(c,t,c.d,.05*W,B*.7,.9*W,32,'#fff',400);T_(c,t,c.desc,.05*W,B*.8,.9*W,24,'#c9d6ff',400)}
+else if(k==6){const sp=L?[0,0,W*.42,B]:[0,0,W,B*.42];IMG(c,t,...sp);const tx=L?W*.46:.05*W,ty=L?.06*B:B*.45,tw=L?.5*W:.9*W;LB('PLAYER PERFORMANCE',tx,ty,Math.min(tw,340*S),42*S,'#e10600','#fff');let y=ty+52*S;y+=T_(c,t,c.a,tx,y,tw,56,'#f5c518');y+=T_(c,t,c.b,tx,y,tw,30,'#fff',400);R(tx,y+6*S,tw,.17*B,'rgba(255,255,255,.1)',14*S);SHB(tx,y+6*S,tw,.17*B);T_(c,t,c.c,tx,y+10*S,tw,34,tc);T_(c,t,c.d,tx,y+.085*B,tw,30,tc,400);T_(c,t,c.head,tx,y+.2*B,tw,28,'#c9d6ff',400)}
+else if(k==8){IMG(c,t,0,0,W,B);
+const bx=.03*W,by=.04*B,bh=62*S;PG(bx,by,200*S,bh,14*S,'#e11d1d','#fff',4*S);IT('BREAKING',bx+107*S,by+bh/2,bh*.52,'#fff');PG(bx+180*S,by+bh*.3,130*S,bh*.85,14*S,'#1f56d6','#fff',4*S);IT('NEWS',bx+250*S,by+bh*.72,bh*.5,'#fff');
+const pw=L?.6*W:.92*W,pa=pw-50*S,ph=HT(c,c.head,pa,50)+40*S,py=Math.min(B*(L?.36:.42),B-ph-.1*B);PG(.04*W,py,pw,ph,16*S,c.bg,'#fff',4*S);SHB(.04*W,py,pw,ph);T_(c,t,c.head,.04*W+24*S,py+20*S,pa,50,tc);
+if(c.desc){R(.04*W,py+ph+10*S,pw,HT(c,c.desc,pw-24*S,26)+14*S,'rgba(8,16,40,.92)',8*S);T_(c,t,c.desc,.04*W+12*S,py+ph+17*S,pw-24*S,26,'#fff',400)}}
+else if(k==9){IMG(c,t,0,0,W,B);const hh=.15*B,hg=X.createLinearGradient(0,0,0,hh);hg.addColorStop(0,'#050d2e');hg.addColorStop(1,'#10246b');R(0,0,W,hh,hg);SHB(0,0,W,hh);R(0,hh,W,4*S,'#fff');PG(W*.2,hh*.14,W*.6,hh*.72,hh*.3,'#0a1a52','#fff',3*S);IT('BREAKING NEWS',W/2+hh*.15,hh/2,hh*.5,'#fff');
+const px=.03*W,pw=L?.58*W:.94*W,ph=L?.66*B:.44*B,py=L?.2*B:B-ph-.04*B,pa=pw-70*S,h1=HT(c,c.head,pa,54),h2=HT(c,c.desc,pa,28,400),ty=py+(ph-h1-h2)/2;PG(px,py,pw,ph,L?34*S:20*S,c.bg,'#fff',5*S);SHB(px,py,pw,ph);T_(c,t,c.head,px+30*S,ty,pa,54,tc);T_(c,t,c.desc,px+30*S,ty+h1+8*S,pa,28,'#fff',400)}
+else if(k==10){const hh=B*.24,g=X.createLinearGradient(0,0,0,hh);g.addColorStop(0,'#06143f');g.addColorStop(1,'#0e3290');R(0,0,W,hh,g);SHB(0,0,W,hh);const h1=HT(c,c.head,.92*W,46);T_(c,t,c.head,.04*W,(hh-h1)/2,.92*W,46,tc);
+const rg=X.createLinearGradient(0,hh,0,B);rg.addColorStop(0,c.bg);rg.addColorStop(1,'#4a060e');R(0,hh,W,B-hh,rg);R(0,hh,W,B*.075,'rgba(0,0,0,.35)');X.fillStyle='rgba(255,255,255,.35)';X.font=`italic 900 ${B*.04}px Arial`;X.textAlign='center';X.textBaseline='middle';X.direction='ltr';for(let i=0;i<4;i++)X.fillText('BREAKING NEWS',W*(.12+i*.25),hh+B*.037);
+PG(W*.26,hh+B*.012,W*.3,B*.07,16*S,'#fff','#000',2*S);IT('BREAKING NEWS',W*.41,hh+B*.047,B*.045,'#c8102e');PG(W*.52,hh+B*.012,W*.22,B*.07,16*S,'#f5c518','#fff',2*S);X.fillStyle='#0a1630';X.font=`800 ${B*.045}px ${FONT}`;X.direction='rtl';X.textAlign='center';X.fillText('بریکنگ نیوز',W*.63,hh+B*.047);
+const y0=B*.37,h0=B*.58;
+if(L){const rx=.04*W,rw=.17*W,rh=h0-.1*B;R(rx-4*S,y0-4*S,rw+8*S,rh+8*S,'#fff');IMG(c,t,rx,y0,rw,rh,c.src2||'');TG(c.a,rx-4*S,y0+rh+4*S,rw+8*S,.1*B-4*S);R(.24*W-5*S,y0-5*S,.38*W+10*S,h0+10*S,'#fff');IMG(c,t,.24*W,y0,.38*W,h0);T_(c,t,c.desc,.65*W,y0,.31*W,34,'#fff',700,1)}
+else{const ph=h0*.5;R(.05*W-5*S,y0-5*S,.9*W+10*S,ph+10*S,'#fff');IMG(c,t,.05*W,y0,.9*W,ph);const ry=y0+ph+14*S,rh=B*.95-ry-.07*B,rw=.3*W;R(.05*W-4*S,ry-4*S,rw+8*S,rh+8*S,'#fff');IMG(c,t,.05*W,ry,rw,rh,c.src2||'');TG(c.a,.05*W-4*S,ry+rh+4*S,rw+8*S,.07*B-4*S);T_(c,t,c.desc,.39*W,ry,.56*W,30,'#fff',700,1)}
+R(0,H-ft,W,ft,'#fff');if(c.c){const r=ft*.38;X.font=`700 ${ft*.45}px Arial`;const tw=X.measureText(c.c).width,sx=(W-(2*r+14*S+tw))/2;X.fillStyle='#1877f2';X.beginPath();X.arc(sx+r,H-ft/2,r,0,7);X.fill();X.fillStyle='#fff';X.textAlign='center';X.textBaseline='middle';X.direction='ltr';X.fillText('f',sx+r,H-ft/2+r*.1);X.fillStyle='#0a1630';X.textAlign='left';X.fillText(c.c,sx+2*r+14*S,H-ft/2)}}
+else if(k==11){const tb=Math.max(.09*B,54*S);BN(c,k,tb);const ih=(B-tb)*.55*(c.fs||1),y0=tb+4*S;IMG(c,t,0,y0,W,ih);const y=y0+ih+.03*B,h=T_(c,t,c.head,.04*W,y,.92*W,46,tc);T_(c,t,c.desc,.04*W,y+h+.01*B,.92*W,26,'#e6e6e6',400);SP(c,B,'#0a1630','#f5c518','#0a1630')}
+else if(k==12){const tb=Math.max(.09*B,54*S),hh=B-tb,ix=L?[0,tb,W*.5,hh]:[0,tb,W,hh*.45],px=L?W*.5:0,py=L?tb:tb+hh*.45,pw=L?W*.5:W,ph=L?hh:hh*.55;IMG(c,t,...ix);R(px,py,pw,ph,c.bg);R(L?px:0,L?tb:py,L?6*S:W,L?hh:6*S,'#f5c518');const m=.04*W,h1=HT(c,c.head,pw-2*m,46),h2=HT(c,c.desc,pw-2*m,26,400),ty=py+Math.max(.03*B,(ph-h1-h2)/2);T_(c,t,c.head,px+m,ty,pw-2*m,46,tc);T_(c,t,c.desc,px+m,ty+h1+.01*B,pw-2*m,26,'#fff',400);BN(c,k,tb);SP(c,B,'#0a1630','#e10600','#fff')}
+else if(k==13){const tb=Math.max(.09*B,54*S);IMG(c,t,0,0,W,B);BN(c,k,tb);const w=.9*W,h1=HT(c,c.head,w,50),h2=HT(c,c.desc,w,26,400),ph=h1+h2+.04*B,py=B-ph-.02*B;TP(.03*W,py,.94*W,ph);T_(c,t,c.head,.05*W,py+.02*B,w,50,tc);T_(c,t,c.desc,.05*W,py+.02*B+h1,w,26,'#e6e6e6',400);SP(c,B,'#c8102e','#f5c518','#0a1630')}
+else if(k==14){const tb=Math.max(.09*B,54*S),g=X.createLinearGradient(0,0,0,B);g.addColorStop(0,c.bg);g.addColorStop(1,'#000');R(0,0,W,B,g);BN(c,k,tb);const ih=(B-tb)*.52*(c.fs||1),iy=tb+.04*B;R(.08*W-6*S,iy-6*S,.84*W+12*S,ih+12*S,'#f5c518');IMG(c,t,.08*W,iy,.84*W,ih);const y=iy+ih+.04*B,h=T_(c,t,c.head,.05*W,y,.9*W,46,tc);T_(c,t,c.desc,.05*W,y+h+.01*B,.9*W,26,'#d6dcff',400);SP(c,B,'#f5c518','#e10600','#fff','#0a1630')}
+else if(k==15){const tb=Math.max(.09*B,54*S);R(0,0,W,B,c.bg);BN(c,k,tb);const y=tb+.03*B,h1=T_(c,t,c.head,.04*W,y,.92*W,50,tc);R(.04*W,y+h1+.01*B,.2*W,5*S,'#f5c518');const iy=y+h1+.04*B;IMG(c,t,.04*W,iy,.92*W,Math.max(.1*B,B-iy-.03*B));SP(c,B,'#e10600','#fff','#c8102e')}
+else if(k==16){IMG(c,t,0,0,W,B)}
+else{const has=!!(c.src||(c.imgs&&c.imgs.length)),w=.9*W,h1=HT(c,c.head,w,60),h2=HT(c,c.desc,w,30,400),top=.24*B+5*S,ph=has?Math.min(h1+h2+.06*B,B-top-.2*B):0,py=has?B-ph:top;
+if(has){IMG(c,t,0,0,W,py);R(0,py,W,B-py,c.bg)}
+X.save();X.beginPath();X.rect(0,py,W,B-py);X.clip();X.fillStyle='rgba(255,255,255,.08)';const gp=170*S,n=Math.ceil((W+H*.4)/gp)+1;for(let i=0;i<n;i++){const x=(i*gp+t*70*S)%(n*gp)-H*.4;X.beginPath();X.moveTo(x,0);X.lineTo(x+60*S,0);X.lineTo(x+60*S-H*.4,B);X.lineTo(x-H*.4,B);X.fill()}X.restore();
+R(0,.1*B,W,.14*B,'#0a0a0a');SHB(0,.1*B,W,.14*B);R(0,.24*B,W,5*S,'#f5c518');X.save();X.globalAlpha=.65+.35*Math.abs(Math.sin(t*5));LB('BREAKING NEWS ALERT',.05*W,.115*B,.9*W,.11*B,'#e10600','#fff');X.restore();
+const ty=has?py+.03*B:.3*B;T_(c,t,c.head,.05*W,ty,w,60,tc);T_(c,t,c.desc,.05*W,ty+h1+.02*B,w,30,'#fff',400)}
+X.restore()}
+function LOGO(){const m=.025*W,tb=(P.tickOn?.075*H:0)+FH+SH,im=gi(P.logo);let w,h;X.save();X.globalAlpha=P.lop;if(im){w=P.lsz*W;h=w*im.height/im.width}else{const fs=26*S*P.lsz/.14;X.font=`800 ${fs}px Arial`;w=X.measureText(P.chan).width+30*S;h=fs*1.9}const x=P.lpos[1]=='r'?W-m-w:m,y=P.lpos[0]=='t'?m:H-m-tb-h;if(im)X.drawImage(im,x,y,w,h);else if(P.chan){R(x,y,w,h,'#c8102e',h/5);X.strokeStyle='#f5c518';X.lineWidth=2*S;X.stroke();X.fillStyle='#fff';X.textAlign='center';X.textBaseline='middle';X.direction='ltr';X.fillText(P.chan,x+w/2,y+h/2)}X.restore()}
+function TICK(t){if(!P.tickOn)return;FONT=stk(P.fu,P.fe);const h=.075*H,y=H-FH-h,lw=Math.max(.17*W,190*S),s=P.tick||'';X.save();R(0,y,W,h,P.tickBg);R(0,y,W,3*S,'#f5c518');SHB(0,y,W,h);const vx=P.tdir<0?lw:0,vw=W-lw;X.beginPath();X.rect(vx,y,vw,h);X.clip();X.font=`700 ${h*.5}px ${FONT}`;X.direction=UR.test(s)?'rtl':'ltr';X.textAlign='left';X.textBaseline='middle';X.fillStyle=P.tickC;const tw=X.measureText(s).width,cyc=tw+vw,o=(t*P.tickSpd*S)%cyc;X.fillText(s,P.tdir<0?vx-tw+o:vx+vw-o,y+h/2);X.restore();LB('BREAKING NEWS',P.tdir<0?6*S:W-lw+6*S,y+h*.12,lw-12*S,h*.76,'#e10600','#fff')}
+/* ---------- frame + transitions ---------- */
+function frame(t){X.setTransform(1,0,0,1,0,0);X.globalAlpha=1;X.fillStyle='#000';X.fillRect(0,0,W,H);const cs=P.cards;let k=-1;cs.forEach((c,i)=>{if(t>=c.s&&t<c.e)k=i});FH=k>=0&&cs[k].tpl==10?.07*H:0;SH=k>=0&&cs[k].tpl>10&&cs[k].tpl<16?.06*H:0;CU=k>=0?t-cs[k].s:0;
+if(k>=0){const c=cs[k],pv=cs[k-1],p=(t-c.s)/(P.td||.6),m=P.trans;if(pv&&p<1&&m!='cut'&&pv.e>=c.s-.05){const q=ez(cl(p,0,1)),tp=Math.min(t,pv.e-.01);X.save();if(m=='fade'){X.globalAlpha=q<.5?1-q*2:(q-.5)*2;CARD(q<.5?pv:c,q<.5?tp:t)}
+else if(m=='flash'){CARD(q<.5?pv:c,q<.5?tp:t);X.fillStyle='#fff';X.globalAlpha=1-Math.abs(q*2-1);X.fillRect(0,0,W,H)}
+else if(m=='push'){X.save();X.translate(-q*W,0);CARD(pv,tp);X.restore();X.translate((1-q)*W,0);CARD(c,t)}
+else{CARD(pv,tp);if(m=='cross')X.globalAlpha=q;else if(m=='slide')X.translate((1-q)*W,0);else if(m=='slidel')X.translate(-(1-q)*W,0);else if(m=='slideu')X.translate(0,(1-q)*H);else if(m=='zoom'){X.translate(W/2,H/2);X.scale(.3+.7*q,.3+.7*q);X.translate(-W/2,-H/2);X.globalAlpha=q}else if(m=='wipe'){X.beginPath();X.rect(W*(1-q),0,W*q,H);X.clip()}CARD(c,t)}X.restore()}else CARD(c,t)}
+if(P.ls=='all')shine(0,0,W,H,CU,1.2,.55);
+FXO(t);CAP(t);LOGO();TICK(t)}
+/* ---------- timeline / UI ---------- */
+function TL(){const c=$('tl'),w=c.width=c.clientWidth*2||1000,h=c.height=128,g=c.getContext('2d'),e=tot(),k=w/e;g.fillStyle='#17171b';g.fillRect(0,0,w,h);if(peaks){g.fillStyle='#2fb7b0';const bw=adur/peaks.length*k;peaks.forEach((v,i)=>g.fillRect(i*bw,40-v*36,Math.max(1,bw-.5),v*72+1))}
+P.cards.forEach((c,i)=>{g.globalAlpha=.85;g.fillStyle=i==P.sel?'#25f4ee':'#4b4b57';g.fillRect(c.s*k,84,Math.max(2,(c.e-c.s)*k-2),40);g.globalAlpha=1;g.fillStyle=i==P.sel?'#000':'#fff';g.font='bold 24px Arial';g.fillText(i+1,c.s*k+6,112)});g.fillStyle='#fff';g.fillRect(T*k-1,0,3,h)}
+function draw(){frame(T);$('rs').textContent=P.res+'p · '+P.asp;$('tm').textContent=fm(T)+' / '+fm(tot());$('sk').value=T/tot()*1000;TL();if(exporting)$('pg').value=T/tot()}
+function list(){$('list').innerHTML=P.cards.map((c,i)=>`<div class="card ${i==P.sel?'on':''}" onclick="sel(${i})"><i style="background-image:url('${c.src}')"></i><small>${i+1}. ${esc(c.head)||'(empty)'}<br>${c.s.toFixed(1)}–${c.e.toFixed(1)}s</small><button onclick="event.stopPropagation();mv(${i},-1)">↑</button><button onclick="event.stopPropagation();mv(${i},1)">↓</button><button onclick="event.stopPropagation();delCard(${i})">✕</button></div>`).join('')}
+function fill(){const c=cur();document.querySelectorAll('[data-k]').forEach(e=>{const v=c[e.dataset.k];e.type=='checkbox'?e.checked=!!v:e.value=v});document.querySelectorAll('[data-g]').forEach(e=>{const v=P[e.dataset.g];e.type=='checkbox'?e.checked=!!v:e.value=v});[...'abcd'].forEach((k,i)=>{const l=LBL[c.tpl][i];$('w'+k).style.display=l?'':'none';$('l'+k).textContent=l||'';$('w'+k).querySelector('input').value=c[k]});fpv();$('im2').style.display=c.tpl==10?'':'none';document.querySelectorAll('#tdr button').forEach(b=>b.classList.toggle('r',+b.dataset.dir==P.tdir));ith();vinfo()}
+function val(){const cs=P.cards,m=[];let err='';cs.forEach((c,i)=>{if(c.s<0||c.e<0)err+=`Card ${i+1}: times cannot be negative. `;if(c.e<=c.s)err+=`Card ${i+1}: end must be after start. `;if(adur&&c.e>adur+.05)m.push(`Card ${i+1} ends after the voiceover (${adur.toFixed(1)}s).`);if(i&&!P.ov&&c.s<cs[i-1].e-.001)m.push(`Cards ${i} and ${i+1} overlap.`);if(i&&c.s>cs[i-1].e+.05)m.push(`Gap before card ${i+1}: nothing is shown for ${(c.s-cs[i-1].e).toFixed(1)} s.`)});if(cs.length&&cs[0].s>.05)m.unshift(`Nothing is shown for the first ${cs[0].s.toFixed(1)} s (black screen). Use Close gaps in Timing.`);$('msg').textContent=err+m.slice(0,2).join(' ');return{err}}
+const up=()=>{sv();fill();list();val();draw()};
+const sel=i=>{P.sel=i;fill();list();seek(P.cards[i].s);tab(1)};
+function mv(i,d){const j=i+d,c=P.cards;if(j<0||j>=c.length)return;[c[i],c[j]]=[c[j],c[i]];let t=0;c.forEach(x=>{const l=x.e-x.s;x.s=+t.toFixed(2);x.e=+(t+l).toFixed(2);t+=l});P.sel=j;up()}
+/* ---------- playback ---------- */
+function seek(t){T=cl(t,0,tot());if(adur)A.currentTime=T;if(playing){t0=performance.now()-T*1000;vstop();if(hasAU())vplay(T)}draw()}
+function play(){if(playing)return;if(T>=tot()-.05)T=0;playing=1;t0=performance.now()-T*1000;if(hasAU()){ac();AC.resume();vplay(T)}if(adur){A.currentTime=T;AC&&AC.resume();A.play().catch(()=>0)}$('pp').textContent='❚❚';loop()}
+function pause(){playing=0;A.pause();vstop();$('pp').textContent='▶'}
+function loop(){if(!playing)return;T=(performance.now()-t0)/1000;const e=tot();if(T>=e){T=e;draw();pause();if(exporting)fin();return}draw();requestAnimationFrame(loop)}
+/* ---------- export (real-time canvas + voiceover recording) ---------- */
+function exp(){const v=val();if(v.err)return;if(!window.MediaRecorder){$('xs').textContent='This browser cannot record video. Use Chrome.';return}pause();
+const mt=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm'].find(m=>MediaRecorder.isTypeSupported(m));if(!mt){$('xs').textContent='No supported video format found.';return}
+if(hasAU())ac();const st=cv.captureStream(P.fps);if(DS&&(adur||hasAU()))DS.stream.getAudioTracks().forEach(x=>st.addTrack(x));
+rec=new MediaRecorder(st,{mimeType:mt,videoBitsPerSecond:P.res>720?1e7:5e6,audioBitsPerSecond:192e3});chunks=[];cancel=0;$('dl').style.display='none';
+rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+rec.onstop=()=>{if(cancel){$('xs').textContent='Export cancelled.';return}$('pg').value=1;const ext=mt.includes('mp4')?'mp4':'webm',a=$('dl');const bl=new Blob(chunks,{type:mt.split(';')[0]});a.href=URL.createObjectURL(bl);a.download=($('fn').value||'zch-news')+'.'+ext;a.textContent='Download '+a.download;a.style.display=window.ZCH?'none':'block';$('xs').textContent='Export finished ('+ext.toUpperCase()+').'+(ext=='webm'?' This browser cannot write MP4. Use Chrome 126 or newer for MP4.':'');window.ZCH?saveNative(bl,a.download):a.click()};
+rec.start(500);exporting=1;$('xs').textContent='Rendering in real time. Keep this tab open and visible.';T=0;play()}
+async function saveNative(b,name){const x=$('xs');x.textContent='Saving to your phone...';try{if(!ZCH.begin(name,b.type))throw 0;const n=393216;for(let o=0;o<b.size;o+=n){const u=new Uint8Array(await b.slice(o,o+n).arrayBuffer());let q='';for(let i=0;i<u.length;i+=8192)q+=String.fromCharCode.apply(null,u.subarray(i,i+8192));if(!ZCH.chunk(btoa(q)))throw 0}x.textContent=ZCH.end()}catch(e){x.textContent='Could not save the file. Check free storage and try again.'}}
+function fin(){exporting=0;setTimeout(()=>rec.stop(),300)}
+/* ---------- events ---------- */
+document.addEventListener('input',e=>{const t=e.target,k=t.dataset.k,g=t.dataset.g;if(!k&&!g&&!t.closest('#ex'))return;
+if(t.closest('#ex')){cur()[t.dataset.x]=t.value;sv();list();draw();return}
+const v=t.type=='checkbox'?+t.checked:t.dataset.n?+t.value:t.value;
+if(k){const c=cur();c[k]=v;if(k=='fu'||k=='fe')fpv();if(k=='tpl'){const DB={7:'#b00000',8:'#a50f16',9:'#f26a0f',10:'#c8102e',12:'#c8102e'};c.bg=DB[v]||(Object.values(DB).includes(c.bg)?'#0a1630':c.bg);const DF={a:['Pakistan','TOP STORIES'],b:['Opponent','BREAKING NEWS'],c:['187/4','Pakistan • Cricket • Sports • Politics'],d:['18.2 overs','Zafar Cricket Hub']};for(const q in DF)if(v>10){if(c[q]==DF[q][0])c[q]=DF[q][1]}else if(c[q]==DF[q][1])c[q]=DF[q][0];if(v==10){if(c.c=='187/4')c.c='facebook.com/ZafarCricketHub';if(c.a=='Pakistan')c.a='Zafar Cricket Hub'}fill()}}else{P[g]=v;if(g=='asp'||g=='res')size()}
+sv();list();val();draw()});
+$('pp').onclick=()=>playing?pause():play();
+$('sk').oninput=e=>seek(e.target.value/1000*tot());
+$('vol').oninput=e=>{A.volume=+e.target.value;if(GN)GN.gain.value=+e.target.value};
+$('tl').onclick=e=>{const r=e.target.getBoundingClientRect(),t=(e.clientX-r.left)/r.width*tot(),i=P.cards.findIndex(c=>t>=c.s&&t<c.e);if(i>=0&&i!=P.sel){P.sel=i;fill();list()}seek(t)};
+$('add').onclick=()=>{const l=P.cards[P.cards.length-1],s=l?l.e:0;const n=nc(s,s+5);n.fu=P.fu;n.fe=P.fe;P.cards.push(n);P.sel=P.cards.length-1;up();tab(1)};
+$('dup').onclick=()=>{const c=cur(),d=c.e-c.s;P.cards.slice(P.sel+1).forEach(x=>{x.s+=d;x.e+=d});P.cards.splice(P.sel+1,0,{...c,s:c.e,e:c.e+d});P.sel++;up()};
+function delCard(i){const c=P.cards[i];if(!c)return;const d=c.e-c.s;
+if(P.cards.length<2){P.cards=[{...c,head:'',desc:'',script:'',imgs:[],src:'',src2:'',vid:'',vd:0,vw:[],wt:[],s:0,e:5}];P.sel=0;up();return}
+P.cards.splice(i,1);
+if(adur>0){if(i>0)P.cards[i-1].e=+Math.max(P.cards[i-1].e,c.e).toFixed(2);else P.cards[0].s=0}
+else P.cards.slice(i).forEach(x=>{x.s=+Math.max(0,x.s-d).toFixed(2);x.e=+Math.max(x.s+.5,x.e-d).toFixed(2)});
+P.sel=Math.min(i,P.cards.length-1);up()}
+$('del').onclick=()=>delCard(P.sel);
+$('cgap').onclick=()=>{let t=0;P.cards.forEach(x=>{const l=Math.max(.5,x.e-x.s);x.s=+t.toFixed(2);x.e=+(t+l).toFixed(2);t+=l});up()};
+$('ss').onclick=()=>{cur().s=+T.toFixed(2);up()};$('se').onclick=()=>{cur().e=+T.toFixed(2);up()};
+$('dist').onclick=()=>{const n=P.cards.length,d=(adur||n*5)/n;P.cards.forEach((c,i)=>{c.s=+(i*d).toFixed(2);c.e=+((i+1)*d).toFixed(2)});up()};
+$('ex1').onclick=exp;$('cx').onclick=()=>{if(!exporting)return;cancel=1;exporting=0;pause();rec.stop()};
+const rd=(f,mx,png)=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>{const i=new Image();i.onload=()=>{const k=Math.min(1,mx/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*k;c.height=i.height*k;c.getContext('2d').drawImage(i,0,0,c.width,c.height);r(png?c.toDataURL():c.toDataURL('image/jpeg',.85))};i.onerror=()=>r(null);i.src=fr.result};fr.onerror=()=>r(null);fr.readAsDataURL(f)});
+let ithk='';function ith(){const c=cur(),L=c.imgs||[],k=P.sel+':'+L.map(q=>q.length+q.slice(-8)).join();if(k==ithk)return;ithk=k;$('ith').innerHTML=L.map((q,i)=>`<div class="th" style="background-image:url('${q}')"><b data-i="${i}">✕</b></div>`).join('')}
+$('img').onchange=async e=>{const c=cur(),fs=[...e.target.files];for(const f of fs){const d=await rd(f,1280);if(d)c.imgs=[...c.imgs,d]}c.src=c.imgs[0]||'';e.target.value='';up()};
+$('ith').onclick=e=>{const b=e.target.closest('b');if(b){const c=cur();c.imgs=c.imgs.filter((_,j)=>j!=+b.dataset.i);c.src=c.imgs[0]||'';up()}};
+$('rimg').onclick=()=>{const c=cur();c.imgs=[];c.src='';up()};
+let nerr=0;
+window.nativeBusy=n=>{$('msg').textContent=n?'Adding '+n+' image'+(n>1?'s':'')+'...':'No image selected.'};
+window.nativeImg=(k,d)=>{const c=cur();if(k=='img'){c.imgs=[...c.imgs,d];c.src=c.imgs[0]}else if(k=='img2')c.src2=d;else P.logo=d;up()};
+window.nativeErr=()=>{nerr=1;$('msg').textContent='Could not read one of the images.'};
+window.nativeDone=()=>{nerr?nerr=0:val()};
+if(window.ZCH&&ZCH.pick)[['img',1],['img2',0],['lg',0]].forEach(([id,m])=>$(id).addEventListener('click',e=>{e.preventDefault();ZCH.pick(id=='lg'?'logo':id,m==1)}));
+$('img2').onchange=async e=>{if(e.target.files[0]){const d=await rd(e.target.files[0],800);if(d){cur().src2=d;up()}}};$('rimg2').onclick=()=>{cur().src2='';up()};
+$('lg').onchange=async e=>{if(e.target.files[0]){const d=await rd(e.target.files[0],600,1);if(d){P.logo=d;sv();draw()}}};
+$('rlg').onclick=()=>{P.logo='';sv();draw()};
+$('fnt').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const ff=new FontFace('Uploaded font',await f.arrayBuffer());await ff.load();document.fonts.add(ff);[$('fsu'),$('fse')].forEach(x=>{if(![...x.options].some(o=>o.value=='Uploaded font'))x.add(new Option('Uploaded font'))});$('msg').textContent='Font added. Pick "Uploaded font" in the Fonts list.';draw()}catch(x){$('msg').textContent='Invalid font file.'}};
+$('aud').onchange=e=>{const f=e.target.files[0];if(f)setVoice(f,'import',f.name)};$('aud2').onchange=e=>{const f=e.target.files[0];if(f)setVoice(f,'import',f.name)};
+$('ra').onclick=()=>rmVoice();
+/* ---------- Gemini voiceover + synced script ---------- */
+const VO=[['Zephyr','Bright'],['Puck','Upbeat'],['Charon','Informative'],['Kore','Firm'],['Fenrir','Excitable'],['Leda','Youthful'],['Orus','Firm'],['Aoede','Breezy'],['Callirrhoe','Easy-going'],['Autonoe','Bright'],['Enceladus','Breathy'],['Iapetus','Clear'],['Umbriel','Easy-going'],['Algieba','Smooth'],['Despina','Smooth'],['Erinome','Clear'],['Algenib','Gravelly'],['Rasalgethi','Informative'],['Laomedeia','Upbeat'],['Achernar','Soft'],['Alnilam','Firm'],['Schedar','Even'],['Gacrux','Mature'],['Pulcherrima','Forward'],['Achird','Friendly'],['Zubenelgenubi','Casual'],['Vindemiatrix','Gentle'],['Sadachbia','Lively'],['Sadaltager','Knowledgeable'],['Sulafat','Warm']];
+$('gvs').innerHTML=VO.map(([n,t])=>`<option value="${n}">${n} — ${t}</option>`).join('');
+let GN,VB={},VS=[],DBP;
+try{DBP=new Promise(r=>{const q=indexedDB.open('zch',1);q.onupgradeneeded=()=>q.result.createObjectStore('vo');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}).catch(()=>null)}catch(e){DBP=Promise.resolve(null)}
+const ig=k=>DBP.then(d=>d?new Promise(r=>{try{const g=d.transaction('vo').objectStore('vo').get(k);g.onsuccess=()=>r(g.result);g.onerror=()=>r(null)}catch(e){r(null)}}):null);
+const ip=(k,v)=>DBP.then(d=>d?new Promise(r=>{try{const t=d.transaction('vo','readwrite');t.objectStore('vo').put(v,k);t.oncomplete=()=>r(1);t.onerror=()=>r(0)}catch(e){r(0)}}):0);
+function ac(){if(!AC){AC=new(window.AudioContext||webkitAudioContext)();const s=AC.createMediaElementSource(A);DS=AC.createMediaStreamDestination();s.connect(DS);s.connect(AC.destination);GN=AC.createGain();GN.gain.value=A.volume;GN.connect(DS);GN.connect(AC.destination)}return AC}
+const hasVO=()=>false;
+const mk=(p,r)=>{const b=new AudioBuffer({length:p.length,sampleRate:r,numberOfChannels:1}),f=b.getChannelData(0);for(let i=0;i<p.length;i++)f[i]=p[i]/32768;const a=Math.min(p.length,Math.round(r*.005)),z=Math.min(p.length,Math.round(r*.03));for(let i=0;i<a;i++)f[i]*=i/a;for(let i=0;i<z;i++)f[p.length-1-i]*=i/z;return b};
+function cln(p,r){const f=Math.round(r*.01),n=Math.floor(p.length/f),pk=[];for(let i=0;i<n;i++){let m=0;for(let j=0;j<f;j++){const v=Math.abs(p[i*f+j]);if(v>m)m=v}pk.push(m/32768)}
+for(let i=Math.max(8,n-120);i<n;i++){if(pk[i]>=.6){let q=1,c=0;for(let k=i-8;k<i;k++)if(pk[k]>.05)q=0;for(let k=i;k<Math.min(n,i+25);k++)if(pk[k]>=.97)c=1;if(q&&c)return p.slice(0,i*f)}}return p}
+const SFXN=[['whoosh','Whoosh'],['swish','Swish (short)'],['pop','Pop'],['impact','Impact boom'],['ding','Ding'],['sting','Breaking sting'],['riser','Riser']],LEAD={whoosh:.25,swish:.12,pop:0,impact:0,ding:0,sting:.05,riser:.95},DUR={whoosh:.8,swish:.4,pop:.25,impact:1.1,ding:1.2,sting:.9,riser:1.1},SBC={};
+function mkSfx(n){const r=44100,d=DUR[n],L=Math.round(r*d),f=new Float32Array(L);let y=0,y2=0,ph=0;
+for(let i=0;i<L;i++){const t=i/r,u=t/d;let v=0;
+if(n=='whoosh'||n=='swish'||n=='riser'){const z=Math.random()*2-1,rs=n=='riser',a=rs?.02+.45*u:.03+.42*Math.sin(Math.PI*u),e=rs?u*u:Math.sin(Math.PI*Math.pow(u,n=='swish'?.7:.6));y+=a*(z-y);y2+=a*(y-y2);v=y2*3.4*e;if(rs){ph+=2*Math.PI*(220+660*u*u)/r;v=v*.7+Math.sin(ph)*.25*u}}
+else if(n=='pop'){ph+=2*Math.PI*(900*Math.exp(-t*18)+120)/r;v=Math.sin(ph)*Math.exp(-t*20)}
+else if(n=='impact'){ph+=2*Math.PI*(110*Math.exp(-t*3)+38)/r;v=Math.sin(ph)*Math.exp(-t*4.5)*1.1+(Math.random()*2-1)*Math.exp(-t*40)*.6}
+else if(n=='ding'){v=(Math.sin(2*Math.PI*1318*t)+.5*Math.sin(2*Math.PI*1976*t)+.25*Math.sin(2*Math.PI*2637*t))*Math.exp(-t*4.5)*.45}
+else{const nt=[523,659,784,1047],k=Math.min(3,Math.floor(t/.12)),tt=t-k*.12,e=k<3?Math.exp(-tt*10):Math.exp(-tt*3.5),fr=nt[k];v=(Math.sin(2*Math.PI*fr*t)+.4*Math.sin(2*Math.PI*fr*2*t))*e*.5}
+f[i]=v}
+let m=0;for(let i=0;i<L;i++)m=Math.max(m,Math.abs(f[i]));const g=m?.85/m:1,fi=Math.round(r*.004),fo=Math.round(r*.02);for(let i=0;i<L;i++){let k=g;if(i<fi)k*=i/fi;if(L-i<fo)k*=(L-i)/fo;f[i]*=k}
+const b=new AudioBuffer({length:L,sampleRate:r,numberOfChannels:1});b.getChannelData(0).set(f);return b}
+const SB=n=>SBC[n]||(SBC[n]=mkSfx(n)),sfxOf=c=>{const n=c.sfx&&c.sfx!='def'?c.sfx:P.sfx;return n&&n!='none'&&DUR[n]?n:null},hasAU=()=>hasVO()||P.cards.some(c=>sfxOf(c));
+$('sfxg').innerHTML=[['none','No sound'],...SFXN].map(([v,n])=>`<option value="${v}">${n}</option>`).join('');
+$('sfxc').innerHTML=[['def','Use the default'],['none','No sound'],...SFXN].map(([v,n])=>`<option value="${v}">${n}</option>`).join('');
+$('sfxt').onclick=()=>{const n=sfxOf(cur());if(!n)return;ac();AC.resume();const x=AC.createBufferSource(),g=AC.createGain();g.gain.value=P.sfv==null?.7:P.sfv;x.buffer=SB(n);x.connect(g);g.connect(GN);x.start()};
+function vstop(){VS.forEach(x=>{try{x.stop()}catch(e){}});VS=[]}
+function vplay(t){if(!AC)return;P.cards.forEach(c=>{const n=sfxOf(c);if(n){const sb=SB(n),bg=c.s-(LEAD[n]||0);if(bg+sb.duration>t){const x=AC.createBufferSource(),g=AC.createGain();g.gain.value=P.sfv==null?.7:P.sfv;x.buffer=sb;x.connect(g);g.connect(GN);x.start(AC.currentTime+Math.max(0,bg-t),Math.max(0,t-bg));VS.push(x)}}})}
+function wav(p,r){const b=new ArrayBuffer(44+p.length*2),v=new DataView(b),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');v.setUint32(4,36+p.length*2,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,r,true);v.setUint32(28,r*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,'data');v.setUint32(40,p.length*2,true);new Int16Array(b,44).set(p);return new Blob([b],{type:'audio/wav'})}
+/* Finds when each word is spoken: speech regions are split by pauses, sentence ends are pinned to real pauses, words in between are spread by length. */
+function aln(p,r,w){const f=Math.round(r*.02),fs=f/r,n=Math.floor(p.length/f),a=[];
+for(let i=0;i<n;i++){let q=0;for(let j=0;j<f;j++){const v=p[i*f+j]/32768;q+=v*v}a.push(Math.sqrt(q/f)>.012)}
+let i0=a.indexOf(true),i1=a.lastIndexOf(true);if(i0<0){i0=0;i1=Math.max(0,n-1)}i0=Math.max(0,i0-3);i1=Math.min(n-1,i1+3);const t=a.slice(i0,i1+1);
+for(let i=0;i<t.length;){if(!t[i]){let j=i;while(j<t.length&&!t[j])j++;if(j-i<6)for(let k=i;k<j;k++)t[k]=true;i=j}else i++}
+const rg=[];for(let i=0;i<t.length;){if(t[i]){let j=i;while(j<t.length&&t[j])j++;rg.push([i*fs,j*fs]);i=j}else i++}
+if(!rg.length)rg.push([0,Math.max(fs,t.length*fs)]);
+const cs=[0];rg.forEach((g,i)=>cs.push(cs[i]+g[1]-g[0]));const R=rg.length,SP=cs[R]||fs,nw=w.length;
+const toT=u=>{for(let i=0;i<R;i++)if(u<cs[i+1])return rg[i][0]+Math.max(0,u-cs[i]);return rg[R-1][1]};
+const W=w.map(x=>x.length+(/[.!?۔،,؟:;]$/.test(x)?2:0)),cw=[0];W.forEach((x,i)=>cw.push(cw[i]+x));const TW=cw[nw]||1;
+const bs=[];for(let k=1;k<nw;k++)if(/[۔.!؟?،,;:]$/.test(w[k-1]))bs.push(k);
+const B=bs.length,bu=bs.map(k=>cw[k]/TW*SP),bk=bs.map(k=>/[۔.!؟?]$/.test(w[k-1])?.8:.35),dp=[],ch=[];for(let b=0;b<=B;b++){dp.push(new Array(R).fill(0));ch.push(new Array(R).fill(0))}
+for(let b=1;b<=B;b++){dp[b][0]=dp[b-1][0]+bk[b-1];ch[b][0]=2}
+for(let b=1;b<=B;b++)for(let j=1;j<R;j++){let v=dp[b][j-1],c=0;const gap=rg[j][0]-rg[j-1][1],m=dp[b-1][j-1]+Math.abs(cs[j]-bu[b-1])-.5*Math.min(.5,gap);if(m<v){v=m;c=1}const s2=dp[b-1][j]+bk[b-1];if(s2<v){v=s2;c=2}dp[b][j]=v;ch[b][j]=c}
+const an=[[0,0]];{let b=B,j=R-1;const m=[];while(b>0&&j>0){const c=ch[b][j];if(c==0)j--;else if(c==1){m.push([bs[b-1],cs[j]]);b--;j--}else b--}m.reverse().forEach(x=>an.push(x))}an.push([nw,SP]);
+const tt=new Array(nw);for(let q=0;q<an.length-1;q++){const k1=an[q][0],u1=an[q][1],k2=an[q+1][0],u2=an[q+1][1],dw=(cw[k2]-cw[k1])||1;for(let k=k1;k<k2;k++)tt[k]=+toT(u1+(cw[k]-cw[k1])/dw*(u2-u1)).toFixed(2)}
+return{p:p.slice(i0*f,(i1+1)*f),t:tt,off:i0*fs}}
+async function tts(tx){const k=localStorage.zchk,part={text:tx};if(P.gs&&P.gs.trim())part.speech_metadata={style:P.gs.trim()};
+const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+P.gm+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:JSON.stringify({contents:[{role:'user',parts:[part]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{voice:P.gv}}}})});
+const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||('HTTP '+r.status));
+const pt=((j.candidates&&j.candidates[0].content.parts||[]).find(x=>x.inlineData)||{}).inlineData;if(!pt)throw new Error('No audio came back.');
+const bin=atob(pt.data),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+let o=0,rate=24000,end=u.length;if(bin.slice(0,4)=='RIFF'){let q=12;o=44;while(q+8<=u.length){const id=bin.slice(q,q+4),sz=u[q+4]|u[q+5]<<8|u[q+6]<<16|u[q+7]*16777216;if(id=='fmt ')rate=u[q+12]|u[q+13]<<8|u[q+14]<<16;if(id=='data'){o=q+8;if(sz>0&&o+sz<=u.length)end=o+sz;break}q+=8+sz+(sz&1)}}else{const m=/rate=(\d+)/.exec(pt.mimeType||'');if(m)rate=+m[1]}
+return{pcm:cln(new Int16Array(u.buffer.slice(o,o+((end-o)&~1))),rate),rate}}
+const cardWords=()=>{const it=P.cards.map(c=>(c.script||c.desc||c.head||'').trim());return{it,bad:it.findIndex(x=>!x),ws:it.map(x=>x.split(/\s+/).filter(Boolean))}};
+function applyTimes(T,cnt,ws,total){let a=0;const st=cnt.map(n=>{const s=a?Math.max(0,T[a]-.12):0;a+=n;return s});let k=0;
+P.cards.forEach((c,i)=>{const n=cnt[i],s=st[i],e=i<cnt.length-1?st[i+1]:total;c.s=+s.toFixed(2);c.e=+Math.max(e,s+.8).toFixed(2);c.vw=ws.slice(k,k+n);c.wt=T.slice(k,k+n).map(x=>+Math.max(0,x-s).toFixed(2));c.vd=+(c.e-c.s).toFixed(2);k+=n})}
+let VM=null,VF=null,NA=[];
+async function setVoice(f,kind,name,save=true){pause();A.src=URL.createObjectURL(f);try{ac();const b=await AC.decodeAudioData(await f.arrayBuffer());adur=b.duration;const d=b.getChannelData(0),n=800,k=d.length/n|0,st=Math.max(1,k/40|0);peaks=[];for(let i=0;i<n;i++){let m=0;for(let j=0;j<k;j+=st)m=Math.max(m,Math.abs(d[i*k+j]));peaks.push(m)}VM={kind,name};VF=f;if(save)ip('master',{b:f,kind,name})}
+catch(x){adur=0;peaks=null;VM=null;VF=null;A.removeAttribute('src');$('msg').textContent='This audio file is not supported by your browser.';return false}T=0;val();draw();vinfo();return true}
+function rmVoice(){pause();A.removeAttribute('src');A.load();adur=0;peaks=null;VM=null;VF=null;T=0;DBP.then(d=>{if(d)try{d.transaction('vo','readwrite').objectStore('vo').delete('master')}catch(e){}});P.cards.forEach(c=>{c.vd=0;c.vw=[];c.wt=[]});up();val();draw()}
+function vinfo(){const el=$('vst');if(!el)return;el.textContent=VM?(VM.kind=='gemini'?'Voiceover: Gemini voice':'Voiceover: '+VM.name)+', '+adur.toFixed(1)+' s'+(P.cards.some(c=>c.vd)?'. The cards are matched to it.':'. Press "Match cards to the voice" to sync the cards and the on-card script.'):'No voiceover yet.'}
+async function genAll(){const st=$('vst'),bt=$('vgen');if(!localStorage.zchk){st.textContent='Paste and save your Gemini API key first.';return false}
+const cw=cardWords(),it=cw.it,ws=cw.ws;if(cw.bad>=0){st.textContent='Card '+(cw.bad+1)+' has no script.';return false}
+const grp=[];let g=[],n=0;it.forEach((t,i)=>{if(g.length&&n+ws[i].length>500){grp.push(g);g=[];n=0}g.push(i);n+=ws[i].length});grp.push(g);
+bt.disabled=true;try{const parts=[],T=[];let off=0,rate=24000;
+for(let q=0;q<grp.length;q++){st.textContent='Generating the voiceover'+(grp.length>1?' (part '+(q+1)+' of '+grp.length+')':'')+'...';const ids=grp[q],w=ids.flatMap(i=>ws[i]),r=await tts(ids.map(i=>it[i]).join(' '));rate=r.rate;const a=aln(r.pcm,rate,w);a.t.forEach(x=>T.push(+(off+x).toFixed(2)));parts.push(a.p);off+=a.p.length/rate;if(q<grp.length-1){parts.push(new Int16Array(Math.round(rate*.25)));off+=.25}}
+const all=new Int16Array(parts.reduce((s,x)=>s+x.length,0));let o=0;parts.forEach(x=>{all.set(x,o);o+=x.length});const fo=Math.min(all.length,Math.round(rate*.03));for(let i=0;i<fo;i++)all[all.length-1-i]*=i/fo;
+if(!(await setVoice(wav(all,rate),'gemini','Gemini voice')))throw new Error('The audio could not be loaded.');
+applyTimes(T,ws.map(x=>x.length),ws.flat(),adur);up();st.textContent='Done: one voiceover, '+adur.toFixed(1)+' s. The cards now follow the voice.';bt.disabled=false;return true}
+catch(e){st.textContent='Could not generate: '+e.message;bt.disabled=false;return false}}
+async function syncCards(){const st=$('vst');if(!VF){st.textContent='Import or generate a voiceover first.';return}
+const cw=cardWords(),ws=cw.ws;if(cw.bad>=0){st.textContent='Card '+(cw.bad+1)+' has no script. Write what is said on each card.';return}
+st.textContent='Matching the cards to the voice...';
+try{ac();const b=await AC.decodeAudioData(await VF.arrayBuffer()),d=b.getChannelData(0),p=new Int16Array(d.length);for(let i=0;i<d.length;i++)p[i]=Math.max(-32768,Math.min(32767,Math.round(d[i]*32767)));
+const a=aln(p,b.sampleRate,ws.flat()),T=a.t.map(x=>+(x+a.off).toFixed(2));applyTimes(T,ws.map(x=>x.length),ws.flat(),adur);up();st.textContent='Done: '+P.cards.length+' cards matched to the voice. Check the timing and adjust it in the Timing tab if needed.'}
+catch(e){st.textContent='Could not match the cards: '+e.message}}
+window.nativeAudStart=()=>{NA=[];$('msg').textContent='Loading the audio...'};
+window.nativeAudChunk=b=>{NA.push(Uint8Array.from(atob(b),c=>c.charCodeAt(0)))};
+window.nativeAudDone=(name,mime)=>{const f=new Blob(NA,{type:mime||'audio/mpeg'});NA=[];setVoice(f,'import',name||'voice')};
+if(window.ZCH&&ZCH.pickAudio)['aud','aud2'].forEach(id=>$(id).addEventListener('click',e=>{e.preventDefault();ZCH.pickAudio()}));
+function shine(x,y,w,h,u,t0,m=1){if(u<t0)return;const per=P.lsp||2.4,p=((u-t0)%per)/.9;if(p>1)return;X.save();X.beginPath();X.rect(x,y,w,h);X.clip();const b=x-w*.25+w*1.5*p,bw=Math.max(.22*w,60*S),al=(P.lsi==null?.5:P.lsi)*m,g=X.createLinearGradient(b,0,b+bw,0);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(.5,'rgba(255,255,255,'+al+')');g.addColorStop(1,'rgba(255,255,255,0)');X.fillStyle=g;X.beginPath();X.moveTo(b+h*.3,y);X.lineTo(b+bw+h*.3,y);X.lineTo(b+bw,y+h);X.lineTo(b,y+h);X.closePath();X.fill();X.restore()}
+const SHB=(x,y,w,h)=>{if(P.ls!='off')shine(x,y,w,h,CU,.9,1)};
+function FXO(t){let c=null;P.cards.forEach(x=>{if(t>=x.s&&t<x.e)c=x});if(!c||!(c.ot||c.ol))return;const u=t-c.s,d=c.e-c.s,bot=H-(P.tickOn?.075*H:0)-FH-SH;FONT=stk(c.fu,c.fe);
+if(c.ot){const th=Math.max(30*S,.045*H),pad=14*S,x0=.025*W,y0=.035*H;X.save();X.font=`800 ${th*.5}px ${FONT}`;X.textBaseline='middle';X.direction='ltr';X.textAlign='center';
+const w1=X.measureText(c.ot1||'').width+2*pad,w2=c.ot2?X.measureText(c.ot2).width+2*pad:0,tw=w1+w2,q=ez(cl((u-.35)/.4,0,1));X.translate(-(tw+x0)*(1-q),0);
+R(x0,y0,w1,th,'#d70026');X.fillStyle='#fff';X.fillText(c.ot1||'',x0+w1/2,y0+th/2);if(c.ot2){R(x0+w1,y0,w2,th,'#fff');X.fillStyle='#d70026';X.fillText(c.ot2,x0+w1+w2/2,y0+th/2)}
+if(c.sh)shine(x0,y0,tw,th,u,.9);X.restore()}
+if(c.ol){const bh=.085*H,y=bot-bh,q=ez(cl((u-.55)/.45,0,1)),bw=W*q;X.save();R(W-bw,y,bw,bh,c.olc||'#0e1a4a');R(W-bw,y,6*S,bh,'#f5c518');if(c.sh)shine(W-bw,y,bw,bh,u,1.1);X.restore();
+const tx=(c.lt||c.head||'').trim();if(tx&&u>=1){const ex=c.olx||'fade',qi=ez(cl((u-1)/.4,0,1)),qo=ex=='stay'?0:ez(cl((u-d*.55)/.45,0,1)),rt=UR.test(tx);let sz=bh*.4;X.save();X.beginPath();X.rect(0,y,W,bh);X.clip();X.font=`700 ${sz}px ${FONT}`;const mw=X.measureText(tx).width;if(mw>.9*W){sz*=.9*W/mw;X.font=`700 ${sz}px ${FONT}`}
+X.globalAlpha=qi*(1-qo);X.fillStyle='#fff';X.textBaseline='middle';X.direction=rt?'rtl':'ltr';X.textAlign=rt?'right':'left';const dx=(1-qi)*40*S+(ex=='slide'?qo*.25*W:0);X.fillText(tx,(rt?.96*W:.04*W)+dx,y+bh/2);X.restore()}}}
+function CAP(t){let c=null;P.cards.forEach(x=>{if(t>=x.s&&t<x.e)c=x});if(!c||!c.cap||!c.vd||!c.vw||!c.vw.length)return;
+const lt=t-c.s,ws=c.vw,ts=c.wt;let wi=0;for(let i=0;i<ts.length;i++)if(ts[i]<=lt)wi=i;
+const ch=[];for(let i=0;i<ws.length;){let j=i,l=0;while(j<ws.length&&(j==i||(j-i<8&&l+ws[j].length<44))){l+=ws[j].length+1;j++}ch.push([i,j]);i=j}
+const g=ch.find(q=>wi<q[1])||ch[ch.length-1],words=ws.slice(g[0],g[1]),rt=UR.test(words.join(' ')),sz=30*S,lh=sz*(rt?LHF:1.4),mw=.9*W;
+X.save();X.font=`700 ${sz}px ${FONT}`;X.textBaseline='middle';X.direction=rt?'rtl':'ltr';X.textAlign='left';
+const sp=X.measureText(' ').width||sz*.3,wd=words.map(x=>X.measureText(x).width),ln=[];let cr=[],cw=0;
+words.forEach((x,i)=>{if(cr.length&&cw+sp+wd[i]>mw){ln.push(cr);cr=[];cw=0}cw+=(cr.length?sp:0)+wd[i];cr.push(i)});ln.push(cr);
+const bot=H-(P.tickOn?.075*H:0)-FH-SH-.02*H-(c.ol?.09*H:0),hh=ln.length*lh+20*S,y0=bot-hh;R(.04*W,y0,.92*W,hh,'rgba(0,0,0,.62)',14*S);
+ln.forEach((li,k)=>{const lw=li.reduce((q,i)=>q+wd[i],0)+sp*(li.length-1);let x=rt?W/2+lw/2:W/2-lw/2;li.forEach(i=>{X.fillStyle=(g[0]+i<=wi)?'#f5c518':'rgba(255,255,255,.82)';X.fillText(words[i],rt?x-wd[i]:x,y0+10*S+lh*(k+.5));x+=rt?-(wd[i]+sp):wd[i]+sp})});X.restore()}
+const gst=()=>{const k=localStorage.zchk;$('gst').textContent=k?'Key saved on this device (••••'+k.slice(-4)+').':'No key saved yet. Create one in Google AI Studio.'};
+$('gks').onclick=()=>{const v=$('gk').value.trim();if(!v){$('gst').textContent='Paste your key first.';return}localStorage.zchk=v;$('gk').value='';gst()};
+$('gkc').onclick=()=>{localStorage.removeItem('zchk');gst()};
+$('vfill').onclick=()=>{const c=cur();c.script=[c.head,c.desc].filter(Boolean).join(' ');up()};
+$('vgen').onclick=async()=>{const c=cur();if(P.as&&wc((c.script||'').trim())>LIM)splitCard(c,32);up();await genAll()};
+$('vsplit').onclick=()=>{const cs=splitCard(cur(),32);up();$('vst').textContent=cs.length>1?'Split into '+cs.length+' cards. Now generate one voiceover for all of them.':'The script is too short to split.'};
+$('vsync').onclick=()=>syncCards();
+$('vplay').onclick=()=>{pause();seek(cur().s);play()};
+$('vdel').onclick=()=>rmVoice();
+/* ---------- news text to cards ---------- */
+const wc=x=>x.split(/\s+/).filter(Boolean).length,CW=['کے','کی','کا','نے','میں','کو','سے','پر','اور','لیے','کیلئے','کیلیے','نئے','نئی','نیا','ہی','بھی','کہ','جو','جس','تک','ہیں','ہے','تھا','تھی','تھے','ان','اس','گئی','گئے','گیا','گئیں','کیے','کیا'],
+hd=t=>{const s=t.split(/(?<=[۔.!؟?])\s+/)[0].replace(/[۔.!؟?]+$/,'');let w=s.split(/\s+/);if(w.length>12){const i=s.search(/[،,]/),c=i>0?s.slice(0,i).split(/\s+/):[];w=c.length>=4&&c.length<=12?c:w.slice(0,10)}while(w.length>3&&CW.includes(w[w.length-1].replace(/[،,]+$/,'')))w.pop();return w.join(' ').replace(/[،,:;\s]+$/,'')};
+function brk(x,lim){const w=x.split(/\s+/);if(w.length<=lim)return[x];const o=[];let g=[];w.forEach(t=>{g.push(t);if(g.length>=lim||(g.length>=lim*.6&&/[،,;:]$/.test(t))){o.push(g.join(' '));g=[]}});if(g.length)o.push(g.join(' '));return o}
+function splitNews(tx,max,tg0){let ss=[];tx.replace(/\r/g,'').split(/\n+/).map(x=>x.trim()).filter(Boolean).forEach(p=>p.split(/(?<=[۔!؟?])\s*|(?<=\.)\s+/).forEach(x=>{x=x.trim();if(x)ss.push(x)}));
+const tot=ss.reduce((a,x)=>a+wc(x),0),tg=tg0||Math.max(28,Math.ceil(tot/max)),out=[];ss=ss.flatMap(x=>brk(x,Math.round(tg*1.4)));let g=[],n=0;
+ss.forEach(x=>{if(g.length&&n+wc(x)>tg*1.3){out.push(g.join(' '));g=[];n=0}g.push(x);n+=wc(x);if(n>=tg){out.push(g.join(' '));g=[];n=0}});if(g.length)out.push(g.join(' '));
+while(out.length>max){const l=out.pop();out[out.length-1]+=' '+l}return out}
+const LIM=45;
+function splitCard(c,tg){const ps=splitNews(c.script||'',12,tg);if(ps.length<2)return[c];const i=P.cards.indexOf(c),e0=c.e,nw=[];
+c.script=ps[0];c.vd=0;c.vw=[];c.wt=[];c.vid='';c.e=+(c.s+Math.max(3,wc(ps[0])/2.6)).toFixed(2);let t0=c.e;
+ps.slice(1).forEach(t=>{const d=Math.max(3,+(wc(t)/2.6).toFixed(1)),n={...c,imgs:[],src:'',src2:'',vid:'',vd:0,vw:[],wt:[],head:hd(t),desc:t,script:t};n.s=+t0.toFixed(2);n.e=+(t0+d).toFixed(2);t0+=d;nw.push(n)});
+const dl=t0-e0;P.cards.slice(i+1).forEach(x=>{x.s=+(x.s+dl).toFixed(2);x.e=+(x.e+dl).toFixed(2)});P.cards.splice(i+1,0,...nw);return[c,...nw]}
+async function aiCards(tx,max){const k=localStorage.zchk;if(!k)throw new Error('Save your Gemini API key in the Voice tab first.');
+const pr='You are an Urdu news editor. Turn the news text below into at most '+max+' cards for a short news video. Use ONLY facts that are in the text and never add facts. Keep names, numbers and dates exactly as written. Write in Urdu. For each card return "headline" (max 10 words), "summary" (max 25 words, shown on screen) and "script" (natural spoken Urdu, max 45 words, read aloud). Return only JSON like {"cards":[{"headline":"","summary":"","script":""}]}.\n\nNEWS TEXT:\n'+tx;
+const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+P.tm+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:JSON.stringify({contents:[{role:'user',parts:[{text:pr}]}],generationConfig:{responseMimeType:'application/json'}})});
+const j=await r.json();if(!r.ok)throw new Error(j.error&&j.error.message||('HTTP '+r.status));
+const cd=((j.candidates||[])[0]||{}).content,x=cd&&cd.parts?cd.parts.filter(q=>!q.thought).map(q=>q.text||'').join(''):'';
+let o;try{o=JSON.parse(x)}catch(e){const m=/\{[\s\S]*\}/.exec(x);if(!m)throw new Error('Gemini did not return usable JSON.');o=JSON.parse(m[0])}
+const a=Array.isArray(o)?o:(o.cards||[]);return a.map(c=>({head:c.headline||'',desc:c.summary||'',script:c.script||c.summary||''})).filter(c=>c.head||c.desc)}
+function mkCards(items){const base=cur(),rep=$('nrep').checked,nw=[];let t0=rep||!P.cards.length?0:P.cards[P.cards.length-1].e;
+items.forEach(it=>{const n={...base,imgs:[],src:'',src2:'',vid:'',vd:0,vw:[],wt:[],head:it.head,desc:it.desc,script:it.script},d=Math.max(3,+(wc(it.script||it.desc||'')/2.6).toFixed(1));n.s=+t0.toFixed(2);n.e=+(t0+d).toFixed(2);t0+=d;nw.push(n)});
+if(rep){P.cards=nw;P.sel=0}else{P.cards=P.cards.concat(nw);P.sel=P.cards.length-nw.length}return nw}
+$('nmk').onclick=async()=>{const tx=$('ntx').value.trim(),st=$('nst'),ai=$('nai').checked;if(!tx){st.textContent='Paste the news text first.';return}
+const max=Math.min(12,Math.max(1,+$('nmx').value||6));$('nmk').disabled=true;
+try{let items;if(ai){st.textContent='Asking Gemini to prepare the cards...';items=await aiCards(tx,max)}else items=splitNews(tx,max).map(t=>({head:hd(t),desc:t,script:t}));
+if(!items.length)throw new Error('No cards could be made from this text.');
+const nw=mkCards(items);up();st.textContent='Created '+nw.length+' cards.'+(ai?' AI can make mistakes: check every name and number.':'');
+if($('nvo').checked){st.textContent='Generating one voiceover...';const ok=await genAll();st.textContent=ok?'Done: '+nw.length+' cards with one voiceover.'+(ai?' AI can make mistakes: check every name and number.':''):'Cards created, but the voiceover failed. '+$('vst').textContent}}
+catch(e){st.textContent='Could not create cards: '+e.message}
+$('nmk').disabled=false};
+$('fxref').onclick=()=>{Object.assign(cur(),{tpl:16,ot:1,ot1:'BREAKING NEWS',ot2:'LIVE',ol:1,olx:'fade',sh:1,it:'cross',pz:1});up()};
+$('fxall').onclick=()=>{const c=cur();P.cards.forEach(x=>['ot','ot1','ot2','ol','olx','olc','sh','it','pz'].forEach(k=>x[k]=c[k]));up()};
+$('irst').onclick=()=>{const c=cur();c.fit='fill';c.iz=1;c.fx=50;c.fy=35;c.fs=1;up()};
+$('iall').onclick=()=>{const c=cur();P.cards.forEach(x=>{x.fit=c.fit;x.iz=c.iz;x.fx=c.fx;x.fy=c.fy;x.fs=c.fs});up()};
+gst();
+/* ---------- init ---------- */
+const opn=(id,a)=>$(id).innerHTML=a.map(n=>`<option>${n}</option>`).join('');opn('fsu',UFN);opn('fse',EFN);
+const op=(id,a)=>$(id).innerHTML=a.map((n,i)=>`<option value="${i}">${n}</option>`).join('');
+op('tpl',TPL.map((n,i)=>`${i+1}. ${n}`));op('ta',['Fade In','Slide From Right','Slide From Left','Slide From Bottom','Pop In','Zoom In','Slide From Top','Zoom Out','Bounce Drop','Spin In','Flip In','Wipe (right to left)','Wipe (left to right)','No animation']);op('ia',['Slow Zoom In','Slow Zoom Out','Pan Left','Pan Right','Static Image','Pan Up','Pan Down','Zoom In + Pan Right','Zoom Out + Pan Left','Pulse','Fast Zoom In']);
+$('ex').innerHTML=[...'abcd'].map(k=>`<div id="w${k}"><label id="l${k}"></label><input type="text" data-x="${k}" dir="auto"></div>`).join('');
+const IK={0:'<rect x="4" y="7" width="16" height="11" rx="2"/><path d="M8 4h8"/>',1:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',8:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',7:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/>',6:'<text x="1" y="17" font-size="14" font-weight="700" fill="currentColor" stroke="none">Aa</text>',2:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',3:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-2v8l-5-2"/>',4:'<path d="M12 3l2.6 5.4 5.9.9-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.3l5.9-.9z"/>'};
+const TB=[['Cards',0],['Edit',1],['Voice',8],['Text',6],['Effects',7],['Timing',2],['Video',3],['Brand',4]],NM=['Cards','Edit','Timing','Video','Brand','Export','Text','Effects','Voice'];
+$('nv').innerHTML=TB.map(([n,i])=>`<button data-t="${i}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IK[i]}</svg>${n}</button>`).join('');
+var CT=0;function tab(i){CT=i;document.querySelectorAll('.pn').forEach(p=>p.classList.toggle('on',p.id=='p'+i));document.querySelectorAll('#nv button').forEach(b=>b.classList.toggle('on',+b.dataset.t==i));$('st').textContent=NM[i]||''}
+$('nv').onclick=e=>{const b=e.target.closest('button');if(b)tab(+b.dataset.t)};
+$('tdr').onclick=e=>{const b=e.target.closest('button');if(b){P.tdir=+b.dataset.dir;up()}};$('un').onclick=()=>hr(-1);$('re').onclick=()=>hr(1);addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)){const k=e.key.toLowerCase();if(k=='z'){e.preventDefault();hr(e.shiftKey?1:-1)}else if(k=='y'){e.preventDefault();hr(1)}}});document.addEventListener('scroll',()=>{document.body.scrollTop=0;document.documentElement.scrollTop=0},true);$('tx').onclick=()=>tab(5);$('rs').onclick=()=>tab(3);$('fa').onclick=()=>{const c=cur();P.fu=c.fu;P.fe=c.fe;P.cards.forEach(x=>{x.fu=c.fu;x.fe=c.fe});up()};
+ig('master').then(o=>{if(o&&o.b)setVoice(o.b,o.kind,o.name,false)});HS=[snap()];hp=0;hsg=sig(HS[0]);ub();size();fill();list();val();draw();tab(0);
+document.fonts.load('700 30px "Noto Nastaliq Urdu"').then(draw).catch(()=>0);
+addEventListener('resize',draw);addEventListener('pagehide',save);
+</script></body></html>
